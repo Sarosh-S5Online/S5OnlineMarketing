@@ -1,3 +1,176 @@
+/* ============================================================
+   TRACKING-CONFIG
+   Vul hier je ID's in zodra je ze hebt. Zolang ze leeg zijn
+   wordt er niets geladen (de cookiebanner werkt wel gewoon).
+   ============================================================ */
+const S5_CONFIG={
+  gaId:'',        // bijv. 'G-XXXXXXXXXX'  (Google Analytics 4)
+  adsId:'',       // bijv. 'AW-XXXXXXXXX'  (Google Ads conversietag)
+  metaPixelId:''  // bijv. '1234567890'    (Meta pixel)
+};
+
+/* ============================================================
+   COOKIETOESTEMMING (AVG)
+   Niets laadt voordat de bezoeker toestemming geeft.
+   ============================================================ */
+const CC_KEY='s5_consent_v1';
+
+const ccRead=()=>{
+  try{ const v=JSON.parse(localStorage.getItem(CC_KEY)); return (v&&typeof v==='object')?v:null; }
+  catch(e){ return null; }
+};
+const ccWrite=(c)=>{
+  try{ localStorage.setItem(CC_KEY,JSON.stringify({...c,ts:new Date().toISOString()})); }catch(e){}
+};
+
+// Google Consent Mode v2: standaard alles geweigerd
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{
+  ad_storage:'denied',
+  ad_user_data:'denied',
+  ad_personalization:'denied',
+  analytics_storage:'denied',
+  functionality_storage:'granted',
+  security_storage:'granted'
+});
+
+let ccGoogleLoaded=false,ccMetaLoaded=false;
+
+const ccLoadScript=(src)=>{
+  const s=document.createElement('script');
+  s.async=true; s.src=src;
+  document.head.appendChild(s);
+  return s;
+};
+
+const ccLoadGoogle=()=>{
+  if(ccGoogleLoaded) return;
+  const id=S5_CONFIG.gaId||S5_CONFIG.adsId;
+  if(!id) return; // nog geen ID ingevuld
+  ccGoogleLoaded=true;
+  ccLoadScript(`https://www.googletagmanager.com/gtag/js?id=${id}`);
+  gtag('js',new Date());
+  if(S5_CONFIG.gaId) gtag('config',S5_CONFIG.gaId,{anonymize_ip:true});
+  if(S5_CONFIG.adsId) gtag('config',S5_CONFIG.adsId);
+};
+
+const ccLoadMeta=()=>{
+  if(ccMetaLoaded||!S5_CONFIG.metaPixelId) return;
+  ccMetaLoaded=true;
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init',S5_CONFIG.metaPixelId);
+  fbq('track','PageView');
+};
+
+const ccApply=(c)=>{
+  gtag('consent','update',{
+    analytics_storage:c.analytics?'granted':'denied',
+    ad_storage:c.marketing?'granted':'denied',
+    ad_user_data:c.marketing?'granted':'denied',
+    ad_personalization:c.marketing?'granted':'denied'
+  });
+  if(c.analytics||c.marketing) ccLoadGoogle();
+  if(c.marketing) ccLoadMeta();
+};
+
+const CC_HTML=`
+  <h2>Wij gebruiken cookies</h2>
+  <p>Noodzakelijke cookies zorgen dat de site werkt. Analytische en marketingcookies plaatsen we alleen met jouw toestemming. Lees meer in ons <a href="/cookies">cookiebeleid</a> en de <a href="/privacy">privacyverklaring</a>.</p>
+  <div class="cc-prefs">
+    <div class="cc-row">
+      <div class="cc-row-text">
+        <h3>Noodzakelijk</h3>
+        <p>Nodig om de website te laten werken en om jouw cookiekeuze te onthouden. Deze staan altijd aan.</p>
+      </div>
+      <label class="cc-toggle"><input type="checkbox" checked disabled aria-label="Noodzakelijke cookies (altijd aan)"><span class="cc-track"></span></label>
+    </div>
+    <div class="cc-row">
+      <div class="cc-row-text">
+        <h3>Analytisch</h3>
+        <p>Hiermee zien we hoe bezoekers de site gebruiken, zodat we hem kunnen verbeteren (Google Analytics).</p>
+      </div>
+      <label class="cc-toggle"><input type="checkbox" id="cc-analytics" aria-label="Analytische cookies"><span class="cc-track"></span></label>
+    </div>
+    <div class="cc-row">
+      <div class="cc-row-text">
+        <h3>Marketing</h3>
+        <p>Hiermee meten we onze advertenties en tonen we relevante advertenties (Google Ads, Meta-pixel).</p>
+      </div>
+      <label class="cc-toggle"><input type="checkbox" id="cc-marketing" aria-label="Marketingcookies"><span class="cc-track"></span></label>
+    </div>
+  </div>
+  <div class="cc-actions">
+    <button class="btn btn-primary" id="cc-accept" type="button">Alles accepteren</button>
+    <button class="btn btn-outline" id="cc-reject" type="button">Alleen noodzakelijk</button>
+    <button class="cc-link" id="cc-toggle-prefs" type="button">Voorkeuren aanpassen</button>
+    <button class="btn btn-outline" id="cc-save" type="button" style="display:none;">Voorkeuren opslaan</button>
+  </div>`;
+
+const ccInit=()=>{
+  const banner=document.createElement('aside');
+  banner.className='cc-banner';
+  banner.id='cc-banner';
+  banner.setAttribute('role','dialog');
+  banner.setAttribute('aria-label','Cookievoorkeuren');
+  banner.innerHTML=CC_HTML;
+  document.body.appendChild(banner);
+
+  const open=(showPrefs)=>{
+    banner.classList.add('open');
+    document.body.classList.add('cc-open');
+    if(showPrefs) showPrefsPanel();
+  };
+  const close=()=>{
+    banner.classList.remove('open','prefs-open');
+    document.body.classList.remove('cc-open');
+  };
+  const showPrefsPanel=()=>{
+    banner.classList.add('prefs-open');
+    document.getElementById('cc-save').style.display='';
+    document.getElementById('cc-toggle-prefs').style.display='none';
+    const c=ccRead();
+    if(c){
+      document.getElementById('cc-analytics').checked=!!c.analytics;
+      document.getElementById('cc-marketing').checked=!!c.marketing;
+    }
+  };
+  const decide=(analytics,marketing)=>{
+    const c={necessary:true,analytics,marketing};
+    ccWrite(c); ccApply(c); close();
+  };
+
+  document.getElementById('cc-accept').addEventListener('click',()=>decide(true,true));
+  document.getElementById('cc-reject').addEventListener('click',()=>decide(false,false));
+  document.getElementById('cc-toggle-prefs').addEventListener('click',showPrefsPanel);
+  document.getElementById('cc-save').addEventListener('click',()=>decide(
+    document.getElementById('cc-analytics').checked,
+    document.getElementById('cc-marketing').checked
+  ));
+
+  // Link "Cookie-instellingen" in de footer om de keuze later te wijzigen
+  const legal=document.querySelector('.footer-legal');
+  if(legal){
+    const link=document.createElement('button');
+    link.type='button';
+    link.className='cc-link';
+    link.style.cssText='padding:0;font-weight:inherit;font-size:inherit;color:inherit;text-decoration:none;';
+    link.textContent='Cookie-instellingen';
+    link.addEventListener('click',()=>open(true));
+    legal.appendChild(link);
+  }
+
+  const saved=ccRead();
+  if(saved) ccApply(saved); else open(false);
+};
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ccInit);
+else ccInit();
+
 document.querySelectorAll('.hero .reveal, .page-hero .reveal').forEach((el,i)=>{
   el.style.transition='opacity .9s ease, transform .9s ease';
   el.style.transitionDelay=(i*0.1)+'s';

@@ -1,7 +1,24 @@
 # S5Online Marketing — website
 
 Statische website (HTML, CSS, JavaScript). **Geen build-stap, geen framework, geen npm.**
-Alle bestanden staan los in deze map en werken direct. Vercel kan dit 1-op-1 hosten zonder configuratie.
+Alle bestanden staan los in deze map en werken direct.
+
+## ⚙️ Analytics aanzetten (Google Analytics / Ads / Meta pixel)
+
+Er staat **nog geen tracking op de site**. De cookiebanner werkt al wel volledig.
+Zodra je je ID's hebt, open je `site.js` en vul je bovenin in:
+
+```js
+const S5_CONFIG={
+  gaId:'',        // bijv. 'G-XXXXXXXXXX'  (Google Analytics 4)
+  adsId:'',       // bijv. 'AW-XXXXXXXXX'  (Google Ads conversietag)
+  metaPixelId:''  // bijv. '1234567890'    (Meta pixel)
+};
+```
+
+Meer hoef je niet te doen. De scripts worden **alleen** geladen nadat een bezoeker
+toestemming geeft via de cookiebanner (AVG-proof, met Google Consent Mode v2).
+Laat een veld leeg als je die dienst niet gebruikt.
 
 ## Wat zit erin
 
@@ -90,11 +107,28 @@ Open daarna `http://localhost:5050` in je browser.
 
 ---
 
+## URL's (SEO)
+
+`vercel.json` zet **cleanUrls** aan. Daardoor worden de adressen netjes:
+
+- `/index.html` → `/`
+- `/diensten.html` → `/diensten`
+- `/gratis-demo.html` → `/gratis-demo`
+
+Alle interne links en canonical-tags staan al op deze schone slugs, met
+`https://s5onlinemarketing.com` als domein. Er zijn ook een `sitemap.xml` en
+`robots.txt` toegevoegd.
+
+> **Let op:** verander je later van domein? Pas dan de canonicals in de HTML-bestanden
+> en de URL's in `sitemap.xml` + `robots.txt` aan.
+
 ## Nog te doen (voor "finished")
 
-- [ ] Cookiebanner toevoegen zodra Google Analytics / Meta-pixel actief wordt
-      (nu staat er nog geen tracking op de site).
-- [ ] In het cookiebeleid een regel over de YouTube-embed opnemen.
-- [ ] In privacyverklaring/cookiebeleid "Squarespace" vervangen door de echte host (Vercel)
-      en "Tally/Formspree" nalopen (contact loopt nu via WhatsApp).
-- [ ] Echte cases/portfolio toevoegen op `werk.html`.
+- [x] ~~Cookiebanner~~ — staat er (categorieën + Consent Mode v2, niets laadt vóór toestemming).
+- [x] ~~Juridische teksten kloppend maken~~ — Vercel, YouTube-embed en WhatsApp verwerkt.
+- [x] ~~Schone URL-slugs~~ — via `vercel.json`.
+- [x] ~~Eerste case op `werk`~~ — Rijschool Stripes.
+- [ ] Je GA4 / Google Ads / Meta pixel-ID invullen in `site.js` (zie boven).
+- [ ] Video voor de 3e animatie toevoegen.
+- [ ] Meer cases toevoegen op `werk.html` (kopieer het `<article class="case-card">`-blok).
+- [ ] Domein koppelen in Vercel (Settings → Domains).
