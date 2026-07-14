@@ -1,0 +1,14 @@
+# Besturingssysteem-rommel
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+
+# Vercel
+.vercel
+
+# Logs
+*.log

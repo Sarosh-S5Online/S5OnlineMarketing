@@ -1,0 +1,10 @@
+# Zorg voor consistente regeleindes in tekstbestanden
+* text=auto eol=lf
+
+# Binaire bestanden niet aanraken
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.woff2 binary
+*.ttf binary
