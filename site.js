@@ -288,16 +288,22 @@ navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
 
 const heroVideo=document.getElementById('hero-video');
 if(heroVideo){
+  // De standaard-snippet van Wistia laadt player.js op elke paginaweergave,
+  // ook bij bezoekers die de video nooit aanzetten. Dat is een paar honderd KB
+  // aan JavaScript voor niets. Daarom laden we hem pas bij een echte klik en
+  // tonen we tot die tijd onze eigen poster.
+  const wistiaId=heroVideo.dataset.wistia;
+
   // Zodra de bezoeker in de buurt van de knop komt (hover op desktop, vinger
-  // op het scherm op mobiel) leggen we alvast de verbinding met YouTube. Dat
+  // op het scherm op mobiel) leggen we alvast de verbinding met Wistia. Dat
   // scheelt bij de daadwerkelijke tik het DNS- en TLS-oponthoud.
   let warmed=false;
   const warmUp=()=>{
     if(warmed) return;
     warmed=true;
-    // Bewust alleen de twee hosts die de embed echt nodig heeft: geen
-    // advertentiedomeinen, dat zou de cookiebanner ondermijnen.
-    ['https://www.youtube-nocookie.com','https://i.ytimg.com'].forEach(h=>{
+    // Alleen de twee hosts die de speler echt nodig heeft: fast.wistia.com
+    // levert de scripts, fast.wistia.net de video zelf.
+    ['https://fast.wistia.com','https://fast.wistia.net'].forEach(h=>{
       const l=document.createElement('link');
       l.rel='preconnect'; l.href=h; l.crossOrigin='';
       document.head.appendChild(l);
@@ -311,19 +317,35 @@ if(heroVideo){
     if(started) return;
     started=true;
     warmUp();
-    const id=heroVideo.dataset.yt;
-    const iframe=document.createElement('iframe');
-    iframe.src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
-    iframe.title='S5Online Marketing, boodschap van de oprichter';
-    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-    iframe.setAttribute('allowfullscreen','');
-    // Poster en spinner blijven staan tot de speler er echt is. Pas dan
-    // schakelen we om, zodat er nooit een leeg zwart vlak in beeld staat.
-    iframe.addEventListener('load',()=>{
+
+    const s1=document.createElement('script');
+    s1.src='https://fast.wistia.com/player.js'; s1.async=true;
+    const s2=document.createElement('script');
+    s2.src=`https://fast.wistia.com/embed/${wistiaId}.js`; s2.async=true; s2.type='module';
+    // Als Wistia onbereikbaar is, blijft de bezoeker niet naar een spinner staren.
+    s1.addEventListener('error',()=>{ heroVideo.classList.remove('loading'); started=false; });
+    document.head.appendChild(s1);
+    document.head.appendChild(s2);
+
+    const player=document.createElement('wistia-player');
+    player.setAttribute('media-id',wistiaId);
+    player.setAttribute('aspect','0.5625');
+    player.setAttribute('autoplay','true');
+
+    // Poster en spinner blijven staan tot de video echt beeld geeft. Het
+    // 'play'-event is daar het juiste moment voor: 'api-ready' komt eerder,
+    // maar dan is er nog niets te zien.
+    const reveal=()=>{
       heroVideo.classList.remove('loading');
       heroVideo.classList.add('playing');
-    });
-    heroVideo.appendChild(iframe);
+    };
+    player.addEventListener('play',reveal);
+    // Mocht de browser het automatisch starten toch tegenhouden, dan tonen we
+    // de speler alsnog: die heeft een eigen afspeelknop. Beter dan een
+    // spinner die blijft draaien.
+    player.addEventListener('api-ready',()=>setTimeout(reveal,1500));
+
+    heroVideo.appendChild(player);
     heroVideo.classList.add('loading');
   };
   heroVideo.addEventListener('click',playVideo);

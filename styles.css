@@ -134,7 +134,7 @@
   .hero-visual{position:relative;display:flex;justify-content:center;align-items:center;}
   .hero-video{position:relative;width:100%;max-width:320px;aspect-ratio:9/16;border-radius:22px;overflow:hidden;cursor:pointer;background:#0d0a18;border:1px solid rgba(255,255,255,0.14);box-shadow:0 40px 80px -24px rgba(0,0,0,0.6),0 0 60px -12px rgba(108,79,224,0.35);transform:perspective(1200px) rotateY(-5deg) rotateX(2deg);transition:transform .45s ease;}
   .hero-video:hover{transform:perspective(1200px) rotateY(0) rotateX(0);}
-  .hero-video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .hero-video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;}
   .hero-video::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,6,15,0.15) 0%,rgba(8,6,15,0) 30%,rgba(8,6,15,0.05) 60%,rgba(8,6,15,0.55) 100%);transition:opacity .3s ease;}
   .hero-video-badge{position:absolute;left:14px;bottom:14px;z-index:2;font-size:12px;font-weight:600;color:#fff;letter-spacing:0.01em;text-shadow:0 1px 6px rgba(0,0,0,0.6);}
   .hero-video-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,0.16);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;transition:transform .25s ease,background .25s ease;box-shadow:0 8px 30px -6px rgba(0,0,0,0.5);}
@@ -143,7 +143,7 @@
   .hero-video:hover .hero-video-play{transform:translate(-50%,-50%) scale(1.08);background:rgba(108,79,224,0.55);}
   @keyframes videoPulse{0%{transform:scale(1);opacity:0.7;}100%{transform:scale(1.35);opacity:0;}}
   .hero-video.playing{cursor:default;transform:none;}
-  /* Tussen de tik en het moment dat YouTube geladen is zit op mobiel zomaar een
+  /* Tussen de tik en het moment dat de speler geladen is zit op mobiel zomaar een
      paar seconden. Zolang blijft de poster staan en draait er een spinner, in
      plaats van een zwart vlak waarvan je denkt dat de video het niet doet. */
   .hero-video.loading{cursor:progress;}
@@ -161,7 +161,13 @@
     .hero-video.loading .hero-video-play::after{animation-duration:1.6s;}
   }
   .hero-video.playing::after,.hero-video.playing .hero-video-badge,.hero-video.playing .hero-video-play,.hero-video.playing .hero-video-poster{display:none;}
-  .hero-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  /* De speler ligt onderop; de poster ligt eroverheen en verdwijnt pas als de
+     video echt beeld geeft. Bewust geen fade of opacity op de speler zelf:
+     als zo'n overgang blijft hangen, kijkt de bezoeker naar een leeg vlak.
+     Een poster die in een keer weggaat kan niet halverwege stranden.
+     Wistia's eigen snippet zet hier nog een padding-top van 177% en een
+     blur-swatch neer; dat hebben we niet nodig, onze poster vult de kaart al. */
+  .hero-video wistia-player{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;padding-top:0;z-index:0;}
 
   .hero-glow{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(108,79,224,0.3),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);z-index:-1;filter:blur(40px);}
 
