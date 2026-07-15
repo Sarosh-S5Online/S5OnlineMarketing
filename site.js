@@ -52,23 +52,32 @@
   // Veiligheidsnet: blijf nooit langer dan 6 seconden hangen
   setTimeout(finish,6000);
 
+  // De onscherpe achtergrondkopie is op telefoons via CSS uitgezet. Daar laden
+  // we hem dus ook niet: twee video's decoderen plus een schermvullende blur
+  // is precies wat een telefoon traag maakt.
+  const useBg = videoBg && getComputedStyle(videoBg).display!=='none';
+
   // Bron en poster pas nu laden: bezoekers die de intro niet krijgen,
   // downloaden ook geen enkele byte ervan
   if(video.dataset.poster) video.poster=video.dataset.poster;
-  [video,videoBg].forEach(v=>{
-    if(!v) return;
+  const load=(v)=>{
     v.querySelectorAll('source').forEach(s=>{ s.src=s.dataset.src; });
     v.load();
-  });
+  };
+  load(video);
+  if(useBg) load(videoBg);
+
   const p=video.play();
   if(p&&p.catch) p.catch(finish); // autoplay geblokkeerd -> meteen door naar de site
-  if(videoBg){
+  if(useBg){
     const pb=videoBg.play();
     if(pb&&pb.catch) pb.catch(()=>{}); // achtergrond is puur decoratie
     // Houd de onscherpe kopie gelijk lopen met de hoofdvideo
     video.addEventListener('timeupdate',()=>{
       if(Math.abs(videoBg.currentTime-video.currentTime)>0.12) videoBg.currentTime=video.currentTime;
     });
+  }else if(videoBg){
+    videoBg.remove();
   }
 })();
 
@@ -279,16 +288,43 @@ navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
 
 const heroVideo=document.getElementById('hero-video');
 if(heroVideo){
+  // Zodra de bezoeker in de buurt van de knop komt (hover op desktop, vinger
+  // op het scherm op mobiel) leggen we alvast de verbinding met YouTube. Dat
+  // scheelt bij de daadwerkelijke tik het DNS- en TLS-oponthoud.
+  let warmed=false;
+  const warmUp=()=>{
+    if(warmed) return;
+    warmed=true;
+    // Bewust alleen de twee hosts die de embed echt nodig heeft: geen
+    // advertentiedomeinen, dat zou de cookiebanner ondermijnen.
+    ['https://www.youtube-nocookie.com','https://i.ytimg.com'].forEach(h=>{
+      const l=document.createElement('link');
+      l.rel='preconnect'; l.href=h; l.crossOrigin='';
+      document.head.appendChild(l);
+    });
+  };
+  heroVideo.addEventListener('pointerenter',warmUp,{once:true});
+  heroVideo.addEventListener('touchstart',warmUp,{once:true,passive:true});
+
+  let started=false;
   const playVideo=()=>{
-    if(heroVideo.classList.contains('playing')) return;
+    if(started) return;
+    started=true;
+    warmUp();
     const id=heroVideo.dataset.yt;
     const iframe=document.createElement('iframe');
     iframe.src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
     iframe.title='S5Online Marketing, boodschap van de oprichter';
     iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
     iframe.setAttribute('allowfullscreen','');
+    // Poster en spinner blijven staan tot de speler er echt is. Pas dan
+    // schakelen we om, zodat er nooit een leeg zwart vlak in beeld staat.
+    iframe.addEventListener('load',()=>{
+      heroVideo.classList.remove('loading');
+      heroVideo.classList.add('playing');
+    });
     heroVideo.appendChild(iframe);
-    heroVideo.classList.add('playing');
+    heroVideo.classList.add('loading');
   };
   heroVideo.addEventListener('click',playVideo);
   heroVideo.querySelector('.hero-video-play').addEventListener('click',(e)=>{e.stopPropagation();playVideo();});

@@ -12,7 +12,7 @@
     {
       "source": "/(.*)\\.(png|jpg|jpeg|webp|svg|ico)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=604800" }
+        { "key": "Cache-Control", "value": "public, max-age=2592000" }
       ]
     },
     {
