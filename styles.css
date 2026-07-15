@@ -603,7 +603,10 @@ body.cc-open .sticky-cta{display:none !important;}
   .cc-banner{left:10px;right:10px;bottom:10px;padding:20px 18px;max-height:85vh;overflow-y:auto;}
   .cc-banner h2{font-size:18px;}
   .cc-actions .btn{width:100%;justify-content:center;}
-  .cc-link{width:100%;text-align:center;}
+  /* Alleen binnen de banner over de volle breedte. De knop "Cookie-instellingen"
+     in de footer heeft dezelfde class en werd hierdoor 350px breed met
+     gecentreerde tekst, waardoor hij los onder de andere links kwam te hangen. */
+  .cc-banner .cc-link{width:100%;text-align:center;}
 }
 
 /* ================= CASE / WERK ================= */
