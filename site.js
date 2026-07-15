@@ -52,35 +52,47 @@
   // Veiligheidsnet: blijf nooit langer dan 6 seconden hangen
   setTimeout(finish,6000);
 
+  // De onscherpe achtergrondkopie is op telefoons via CSS uitgezet. Daar laden
+  // we hem dus ook niet: twee video's decoderen plus een schermvullende blur
+  // is precies wat een telefoon traag maakt.
+  const useBg = videoBg && getComputedStyle(videoBg).display!=='none';
+
   // Bron en poster pas nu laden: bezoekers die de intro niet krijgen,
   // downloaden ook geen enkele byte ervan
   if(video.dataset.poster) video.poster=video.dataset.poster;
-  [video,videoBg].forEach(v=>{
-    if(!v) return;
+  const load=(v)=>{
     v.querySelectorAll('source').forEach(s=>{ s.src=s.dataset.src; });
     v.load();
-  });
+  };
+  load(video);
+  if(useBg) load(videoBg);
+
   const p=video.play();
   if(p&&p.catch) p.catch(finish); // autoplay geblokkeerd -> meteen door naar de site
-  if(videoBg){
+  if(useBg){
     const pb=videoBg.play();
     if(pb&&pb.catch) pb.catch(()=>{}); // achtergrond is puur decoratie
     // Houd de onscherpe kopie gelijk lopen met de hoofdvideo
     video.addEventListener('timeupdate',()=>{
       if(Math.abs(videoBg.currentTime-video.currentTime)>0.12) videoBg.currentTime=video.currentTime;
     });
+  }else if(videoBg){
+    videoBg.remove();
   }
 })();
 
 /* ============================================================
-   TRACKING-CONFIG
+   CONFIG
    Vul hier je ID's in zodra je ze hebt. Zolang ze leeg zijn
    wordt er niets geladen (de cookiebanner werkt wel gewoon).
    ============================================================ */
 const S5_CONFIG={
   gaId:'',        // bijv. 'G-XXXXXXXXXX'  (Google Analytics 4)
   adsId:'',       // bijv. 'AW-XXXXXXXXX'  (Google Ads conversietag)
-  metaPixelId:''  // bijv. '1234567890'    (Meta pixel)
+  metaPixelId:'', // bijv. '1234567890'    (Meta pixel)
+
+  // Waar de aanvragen binnenkomen.
+  contactEmail:'sarosh@s5onlinemarketing.com'
 };
 
 /* ============================================================
@@ -88,10 +100,27 @@ const S5_CONFIG={
    Niets laadt voordat de bezoeker toestemming geeft.
    ============================================================ */
 const CC_KEY='s5_consent_v1';
+// De Autoriteit Persoonsgegevens verwacht dat je toestemming periodiek opnieuw
+// vraagt in plaats van hem voor altijd te bewaren. Na deze termijn verschijnt
+// de banner opnieuw; de vorige keuze staat dan alvast goed ingevuld.
+const CC_MAX_DAGEN=180;
 
-const ccRead=()=>{
+// De opgeslagen keuze, ook als die verlopen is. Alleen om de schuifjes mee
+// voor te vullen, zodat iemand na 180 dagen niet opnieuw zit te zoeken.
+const ccReadRaw=()=>{
   try{ const v=JSON.parse(localStorage.getItem(CC_KEY)); return (v&&typeof v==='object')?v:null; }
   catch(e){ return null; }
+};
+// De keuze die nu nog geldig is. Verlopen telt als geen keuze: dan vragen we
+// het opnieuw en laden we intussen niets.
+const ccRead=()=>{
+  const v=ccReadRaw();
+  if(!v) return null;
+  if(v.ts){
+    const dagen=(Date.now()-new Date(v.ts).getTime())/86400000;
+    if(!(dagen<CC_MAX_DAGEN)) return null; // verlopen, of een onleesbare datum
+  }
+  return v;
 };
 const ccWrite=(c)=>{
   try{ localStorage.setItem(CC_KEY,JSON.stringify({...c,ts:new Date().toISOString()})); }catch(e){}
@@ -180,7 +209,7 @@ const CC_HTML=`
   </div>
   <div class="cc-actions">
     <button class="btn btn-primary" id="cc-accept" type="button">Alles accepteren</button>
-    <button class="btn btn-outline" id="cc-reject" type="button">Alleen noodzakelijk</button>
+    <button class="btn btn-neutral" id="cc-reject" type="button">Alleen noodzakelijk</button>
     <button class="cc-link" id="cc-toggle-prefs" type="button">Voorkeuren aanpassen</button>
     <button class="btn btn-outline" id="cc-save" type="button" style="display:none;">Voorkeuren opslaan</button>
   </div>`;
@@ -207,7 +236,7 @@ const ccInit=()=>{
     banner.classList.add('prefs-open');
     document.getElementById('cc-save').style.display='';
     document.getElementById('cc-toggle-prefs').style.display='none';
-    const c=ccRead();
+    const c=ccReadRaw();
     if(c){
       document.getElementById('cc-analytics').checked=!!c.analytics;
       document.getElementById('cc-marketing').checked=!!c.marketing;
@@ -279,33 +308,142 @@ navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
 
 const heroVideo=document.getElementById('hero-video');
 if(heroVideo){
+  // De standaard-snippet van Wistia laadt player.js op elke paginaweergave,
+  // ook bij bezoekers die de video nooit aanzetten. Dat is een paar honderd KB
+  // aan JavaScript voor niets. Daarom laden we hem pas bij een echte klik en
+  // tonen we tot die tijd onze eigen poster.
+  const wistiaId=heroVideo.dataset.wistia;
+
+  // Zodra de bezoeker in de buurt van de knop komt (hover op desktop, vinger
+  // op het scherm op mobiel) leggen we alvast de verbinding met Wistia. Dat
+  // scheelt bij de daadwerkelijke tik het DNS- en TLS-oponthoud.
+  let warmed=false;
+  const warmUp=()=>{
+    if(warmed) return;
+    warmed=true;
+    // Alleen de twee hosts die de speler echt nodig heeft: fast.wistia.com
+    // levert de scripts, fast.wistia.net de video zelf.
+    ['https://fast.wistia.com','https://fast.wistia.net'].forEach(h=>{
+      const l=document.createElement('link');
+      l.rel='preconnect'; l.href=h; l.crossOrigin='';
+      document.head.appendChild(l);
+    });
+  };
+  heroVideo.addEventListener('pointerenter',warmUp,{once:true});
+  heroVideo.addEventListener('touchstart',warmUp,{once:true,passive:true});
+
+  let started=false;
   const playVideo=()=>{
-    if(heroVideo.classList.contains('playing')) return;
-    const id=heroVideo.dataset.yt;
-    const iframe=document.createElement('iframe');
-    iframe.src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
-    iframe.title='S5Online Marketing, boodschap van de oprichter';
-    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-    iframe.setAttribute('allowfullscreen','');
-    heroVideo.appendChild(iframe);
-    heroVideo.classList.add('playing');
+    if(started) return;
+    started=true;
+    warmUp();
+
+    const s1=document.createElement('script');
+    s1.src='https://fast.wistia.com/player.js'; s1.async=true;
+    const s2=document.createElement('script');
+    s2.src=`https://fast.wistia.com/embed/${wistiaId}.js`; s2.async=true; s2.type='module';
+    // Als Wistia onbereikbaar is, blijft de bezoeker niet naar een spinner staren.
+    s1.addEventListener('error',()=>{ heroVideo.classList.remove('loading'); started=false; });
+    document.head.appendChild(s1);
+    document.head.appendChild(s2);
+
+    const player=document.createElement('wistia-player');
+    player.setAttribute('media-id',wistiaId);
+    player.setAttribute('aspect','0.5625');
+    player.setAttribute('autoplay','true');
+
+    // Poster en spinner blijven staan tot de video echt beeld geeft. Het
+    // 'play'-event is daar het juiste moment voor: 'api-ready' komt eerder,
+    // maar dan is er nog niets te zien.
+    const reveal=()=>{
+      heroVideo.classList.remove('loading');
+      heroVideo.classList.add('playing');
+    };
+    player.addEventListener('play',reveal);
+    // Mocht de browser het automatisch starten toch tegenhouden, dan tonen we
+    // de speler alsnog: die heeft een eigen afspeelknop. Beter dan een
+    // spinner die blijft draaien.
+    player.addEventListener('api-ready',()=>setTimeout(reveal,1500));
+
+    heroVideo.appendChild(player);
+    heroVideo.classList.add('loading');
   };
   heroVideo.addEventListener('click',playVideo);
   heroVideo.querySelector('.hero-video-play').addEventListener('click',(e)=>{e.stopPropagation();playVideo();});
 }
 
-const waForm=document.getElementById('whatsapp-form');
-if(waForm){
-  waForm.addEventListener('submit',(e)=>{
+/* ============================================================
+   CONTACTFORMULIER
+   De bezoeker kiest zelf: WhatsApp of e-mail. Beide kanalen
+   sturen daarna door naar de bedankt-pagina.
+   ============================================================ */
+const contactForm=document.getElementById('contact-form');
+if(contactForm){
+  const WA_NUMMER='31627875141';
+  const knop=document.getElementById('cf-submit');
+  const notitie=document.getElementById('cf-note');
+
+  const ICOON_WA='<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.87 9.87 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14a3.1 3.1 0 0 1-2.16 1.55c-.57.12-1.31.22-3.81-.82-2.6-1.09-4.34-3.53-4.48-3.7-.13-.17-1.06-1.41-1.06-2.7 0-1.28.67-1.9.91-2.16.24-.26.53-.32.7-.32h.5c.16 0 .38-.06.6.46.24.56.8 1.95.87 2.09.07.14.11.3.02.48-.09.18-.14.29-.27.45-.14.16-.29.35-.41.47-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.96 1.25 2.24 1.39.28.14.44.12.61-.07.16-.2.7-.81.89-1.09.19-.28.37-.23.63-.14.26.09 1.64.77 1.92.91.28.14.47.21.53.33.07.12.07.68-.16 1.34Z"/></svg>';
+  const ICOON_MAIL='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
+
+  let kanaal='whatsapp';
+
+  const toonKanaal=()=>{
+    const isWa=kanaal==='whatsapp';
+    knop.innerHTML=(isWa?ICOON_WA:ICOON_MAIL)+(isWa?' Verstuur via WhatsApp':' Verstuur via e-mail');
+    knop.classList.toggle('btn-whatsapp',isWa);
+    knop.classList.toggle('btn-primary',!isWa);
+    notitie.textContent=isWa
+      ? 'Opent WhatsApp met je gegevens al ingevuld. Jij verstuurt het bericht zelf. Ik reageer binnen 24 uur.'
+      : 'Opent je e-mailprogramma met alles al ingevuld. Jij verstuurt de mail zelf. Ik reageer binnen 24 uur.';
+    contactForm.querySelectorAll('.form-switch-btn').forEach(b=>{
+      const actief=b.dataset.kanaal===kanaal;
+      b.classList.toggle('is-active',actief);
+      b.setAttribute('aria-pressed',actief);
+    });
+  };
+
+  contactForm.querySelectorAll('.form-switch-btn').forEach(b=>{
+    b.addEventListener('click',()=>{ kanaal=b.dataset.kanaal; toonKanaal(); });
+  });
+  toonKanaal();
+
+  // Alle velden zijn verplicht, dus de browser laat het formulier niet door
+  // met een leeg veld. Hier hoeft niets meer overgeslagen te worden.
+  const regels=()=>{
+    const v=(n)=>{ const el=contactForm.querySelector(`[name="${n}"]`); return el?el.value.trim():''; };
+    const berichtLabel=contactForm.dataset.berichtLabel||'Bericht';
+    return [
+      `Naam: ${v('naam')}`,
+      `E-mail: ${v('email')}`,
+      `Telefoon: ${v('telefoon')}`,
+      `Bedrijf: ${v('bedrijf')}`,
+      `${berichtLabel}: ${v('bericht')}`
+    ].join('\n');
+  };
+
+  const naarBedankt=()=>{ window.location.href='/bedankt'; };
+
+  contactForm.addEventListener('submit',(e)=>{
     e.preventDefault();
-    const naam=waForm.naam.value.trim();
-    const bedrijf=waForm.bedrijf.value.trim();
-    const contact=waForm.contact.value.trim();
-    const bericht=waForm.bericht.value.trim();
-    const intro=waForm.dataset.waIntro||'Hoi Sarosh, ik wil graag meer weten over S5Online Marketing.';
-    const berichtLabel=waForm.dataset.waBerichtLabel||'Bericht';
-    let text=`${intro}\n\nNaam: ${naam}\nBedrijf: ${bedrijf}\nContact: ${contact}\n`;
-    if(bericht) text+=`${berichtLabel}: ${bericht}\n`;
-    window.open(`https://wa.me/31627875141?text=${encodeURIComponent(text)}`,'_blank');
+    const intro=contactForm.dataset.intro||'Hoi Sarosh, ik wil graag meer weten over S5Online Marketing.';
+    const tekst=`${intro}\n\n${regels()}`;
+
+    if(kanaal==='whatsapp'){
+      // Openen tijdens de klik van de bezoeker, anders blokkeert de browser het.
+      window.open(`https://wa.me/${WA_NUMMER}?text=${encodeURIComponent(tekst)}`,'_blank','noopener');
+      naarBedankt();
+      return;
+    }
+
+    // E-mail. Zolang er geen verzenddienst is ingesteld, openen we de mailapp
+    // van de bezoeker met alles ingevuld. Dat komt gewoon aan en er komt geen
+    // enkele externe partij aan de gegevens te pas.
+    const onderwerp=contactForm.dataset.onderwerp||'Aanvraag via de website';
+    const a=document.createElement('a');
+    a.href=`mailto:${S5_CONFIG.contactEmail}?subject=${encodeURIComponent(onderwerp)}&body=${encodeURIComponent(tekst)}`;
+    document.body.appendChild(a); a.click(); a.remove();
+    // Even wachten, anders onderbreekt het doorsturen het openen van de mailapp.
+    setTimeout(naarBedankt,800);
   });
 }

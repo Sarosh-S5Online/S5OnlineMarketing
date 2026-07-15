@@ -11,6 +11,13 @@
 <meta property="og:description" content="30 minuten. Echte antwoorden. Geen pitch, geen druk.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="nl_NL">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#6C4FE0">
+<link rel="preload" href="/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/Kameron-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -21,7 +28,7 @@
     <nav>
       <a href="/" class="logo">
         <span class="logo-mark">
-          <img src="s5-logo.png" alt="S5Online logo">
+          <img src="s5-logo-96.png" alt="S5Online logo" width="96" height="96" decoding="async">
         </span>
         <span class="logo-text">S5<em>Online</em><span class="logo-suffix"> Marketing</span></span>
       </a>
@@ -61,28 +68,36 @@
       <h2>Plan je gratis <em>strategiegesprek.</em></h2>
       <p>Vul het formulier in en we bevestigen jouw moment binnen een paar uur via WhatsApp. Je gegevens blijven privé.</p>
     </div>
-    <form class="cta-form reveal" id="whatsapp-form" data-wa-intro="Hoi Sarosh, ik wil graag een gratis strategiegesprek inplannen." data-wa-bericht-label="Doel">
+    <form class="cta-form reveal" id="contact-form"
+          data-intro="Hoi Sarosh, ik wil graag een gratis strategiegesprek inplannen."
+          data-bericht-label="Doel"
+          data-onderwerp="Aanvraag gratis strategiegesprek">
+      <div class="form-switch" role="group" aria-label="Kies hoe je contact opneemt">
+        <button type="button" class="form-switch-btn is-active" data-kanaal="whatsapp" aria-pressed="true">WhatsApp</button>
+        <button type="button" class="form-switch-btn" data-kanaal="email" aria-pressed="false">E-mail</button>
+      </div>
       <div class="form-row">
         <label for="cf-name">Naam</label>
-        <input type="text" id="cf-name" name="naam" required placeholder="Jouw naam">
+        <input type="text" id="cf-name" name="naam" required autocomplete="name" placeholder="Jouw naam">
       </div>
       <div class="form-row">
-        <label for="cf-business">Bedrijf of branche</label>
-        <input type="text" id="cf-business" name="bedrijf" required placeholder="Bijv. rijschool, restaurant, bouwbedrijf">
+        <label for="cf-email">E-mailadres</label>
+        <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder="jij@bedrijf.nl">
       </div>
       <div class="form-row">
-        <label for="cf-contact">Telefoon of e-mail</label>
-        <input type="text" id="cf-contact" name="contact" required placeholder="06 12345678 of jij@bedrijf.nl">
+        <label for="cf-phone">Telefoonnummer</label>
+        <input type="tel" id="cf-phone" name="telefoon" required autocomplete="tel" placeholder="06 12345678">
+      </div>
+      <div class="form-row">
+        <label for="cf-business">Bedrijfsnaam</label>
+        <input type="text" id="cf-business" name="bedrijf" required autocomplete="organization" placeholder="Naam van je bedrijf">
       </div>
       <div class="form-row">
         <label for="cf-message">Wat is nu je belangrijkste doel?</label>
-        <textarea id="cf-message" name="bericht" rows="3" placeholder="Bijv. meer aanvragen via mijn website"></textarea>
+        <textarea id="cf-message" name="bericht" required rows="3" placeholder="Bijv. meer aanvragen via mijn website"></textarea>
       </div>
-      <button type="submit" class="btn btn-whatsapp">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.87 9.87 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14a3.1 3.1 0 0 1-2.16 1.55c-.57.12-1.31.22-3.81-.82-2.6-1.09-4.34-3.53-4.48-3.7-.13-.17-1.06-1.41-1.06-2.7 0-1.28.67-1.9.91-2.16.24-.26.53-.32.7-.32h.5c.16 0 .38-.06.6.46.24.56.8 1.95.87 2.09.07.14.11.3.02.48-.09.18-.14.29-.27.45-.14.16-.29.35-.41.47-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.96 1.25 2.24 1.39.28.14.44.12.61-.07.16-.2.7-.81.89-1.09.19-.28.37-.23.63-.14.26.09 1.64.77 1.92.91.28.14.47.21.53.33.07.12.07.68-.16 1.34Z"/></svg>
-        Boek via WhatsApp
-      </button>
-      <p class="form-note">Opent WhatsApp met je gegevens al ingevuld. We bevestigen jouw moment binnen een paar uur.</p>
+      <button type="submit" class="btn btn-whatsapp" id="cf-submit"></button>
+      <p class="form-note" id="cf-note"></p>
     </form>
   </div>
 </section>
@@ -139,7 +154,7 @@
       <div>
         <a href="/" class="logo">
           <span class="logo-mark">
-            <img src="s5-logo.png" alt="S5Online logo">
+            <img src="s5-logo-96.png" alt="S5Online logo" width="96" height="96" decoding="async">
           </span>
           <span class="logo-text">S5<em>Online</em><span class="logo-suffix"> Marketing</span></span>
         </a>
