@@ -382,8 +382,6 @@ if(contactForm){
   const WA_NUMMER='31627875141';
   const knop=document.getElementById('cf-submit');
   const notitie=document.getElementById('cf-note');
-  const veldEmail=contactForm.querySelector('#cf-email');
-  const veldTel=contactForm.querySelector('#cf-phone');
 
   const ICOON_WA='<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.87 9.87 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14a3.1 3.1 0 0 1-2.16 1.55c-.57.12-1.31.22-3.81-.82-2.6-1.09-4.34-3.53-4.48-3.7-.13-.17-1.06-1.41-1.06-2.7 0-1.28.67-1.9.91-2.16.24-.26.53-.32.7-.32h.5c.16 0 .38-.06.6.46.24.56.8 1.95.87 2.09.07.14.11.3.02.48-.09.18-.14.29-.27.45-.14.16-.29.35-.41.47-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.96 1.25 2.24 1.39.28.14.44.12.61-.07.16-.2.7-.81.89-1.09.19-.28.37-.23.63-.14.26.09 1.64.77 1.92.91.28.14.47.21.53.33.07.12.07.68-.16 1.34Z"/></svg>';
   const ICOON_MAIL='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
@@ -398,19 +396,11 @@ if(contactForm){
     notitie.textContent=isWa
       ? 'Opent WhatsApp met je gegevens al ingevuld. Jij verstuurt het bericht zelf. Ik reageer binnen 24 uur.'
       : 'Opent je e-mailprogramma met alles al ingevuld. Jij verstuurt de mail zelf. Ik reageer binnen 24 uur.';
-    // Bij WhatsApp is een telefoonnummer het logische contactmiddel, bij
-    // e-mail juist het adres. Alleen het veld dat er echt toe doet is verplicht.
-    veldEmail.required=!isWa;
-    veldTel.required=isWa;
     contactForm.querySelectorAll('.form-switch-btn').forEach(b=>{
       const actief=b.dataset.kanaal===kanaal;
       b.classList.toggle('is-active',actief);
       b.setAttribute('aria-pressed',actief);
     });
-    contactForm.querySelector('label[for="cf-email"]').innerHTML=
-      'E-mailadres'+(isWa?' <span class="form-optional">optioneel</span>':'');
-    contactForm.querySelector('label[for="cf-phone"]').innerHTML=
-      'Telefoonnummer'+(isWa?'':' <span class="form-optional">optioneel</span>');
   };
 
   contactForm.querySelectorAll('.form-switch-btn').forEach(b=>{
@@ -418,15 +408,18 @@ if(contactForm){
   });
   toonKanaal();
 
+  // Alle velden zijn verplicht, dus de browser laat het formulier niet door
+  // met een leeg veld. Hier hoeft niets meer overgeslagen te worden.
   const regels=()=>{
     const v=(n)=>{ const el=contactForm.querySelector(`[name="${n}"]`); return el?el.value.trim():''; };
     const berichtLabel=contactForm.dataset.berichtLabel||'Bericht';
-    const r=[`Naam: ${v('naam')}`];
-    if(v('email')) r.push(`E-mail: ${v('email')}`);
-    if(v('telefoon')) r.push(`Telefoon: ${v('telefoon')}`);
-    if(v('bedrijf')) r.push(`Bedrijf: ${v('bedrijf')}`);
-    if(v('bericht')) r.push(`${berichtLabel}: ${v('bericht')}`);
-    return r.join('\n');
+    return [
+      `Naam: ${v('naam')}`,
+      `E-mail: ${v('email')}`,
+      `Telefoon: ${v('telefoon')}`,
+      `Bedrijf: ${v('bedrijf')}`,
+      `${berichtLabel}: ${v('bericht')}`
+    ].join('\n');
   };
 
   const naarBedankt=()=>{ window.location.href='/bedankt'; };
