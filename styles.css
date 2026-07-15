@@ -549,12 +549,15 @@ html.intro-on .intro{
   background:radial-gradient(90% 120% at 50% 0%,var(--violet-deep) 0%,var(--portal-bg-1) 65%);
   opacity:1;transition:opacity .55s ease;
 }
-.intro video{width:100%;height:100%;object-fit:cover;display:block;background:var(--portal-bg-1);}
-/* Staand scherm (telefoon): volledig in beeld met donkere randen i.p.v. hard croppen.
-   Zodra er een 9:16-versie is, vervangt die dit gedrag. */
-@media(max-aspect-ratio:1/1){
-  .intro video{object-fit:contain;}
-}
+/* De video zelf: altijd volledig in beeld, nooit bijgesneden of ingezoomd */
+.intro-main{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;z-index:1;
+  transform:scale(1);transition:transform .6s cubic-bezier(.4,0,.2,1);}
+/* Aan het eind zoomt de warp door tot schermvullend. Dat valt niet op omdat het
+   beeld dan abstract is, en zo blijven er geen randen zichtbaar bij de overgang. */
+html.intro-on .intro.intro-out .intro-main{transform:scale(var(--cover-scale,1.4));}
+/* Onscherpe kopie eronder die het scherm vult, zodat er geen balken ontstaan */
+.intro-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;
+  filter:blur(46px) brightness(.5) saturate(1.25);transform:scale(1.18);}
 html.intro-on .intro.intro-out{opacity:0;pointer-events:none;}
 .intro-skip{
   position:absolute;bottom:24px;right:24px;z-index:2;

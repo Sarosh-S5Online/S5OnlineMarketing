@@ -105,7 +105,13 @@
 
 <!-- ============ INTRO (alleen 1e bezoek op de landingspagina) ============ -->
 <div class="intro" id="intro" aria-hidden="true">
-  <video id="intro-video" muted playsinline preload="auto" data-poster="intro-poster.jpg" tabindex="-1">
+  <!-- Onscherpe kopie die de zijkanten vult, zodat de video zelf volledig
+       in beeld past zonder bijgesneden te worden -->
+  <video id="intro-video-bg" class="intro-bg" muted playsinline preload="auto" tabindex="-1" aria-hidden="true">
+    <source data-src="intro.webm" type="video/webm">
+    <source data-src="intro.mp4" type="video/mp4">
+  </video>
+  <video id="intro-video" class="intro-main" muted playsinline preload="auto" data-poster="intro-poster.jpg" tabindex="-1">
     <source data-src="intro.webm" type="video/webm">
     <source data-src="intro.mp4" type="video/mp4">
   </video>

@@ -13,12 +13,26 @@
   if(!root.classList.contains('intro-on')) return;
   const intro=document.getElementById('intro');
   const video=document.getElementById('intro-video');
+  const videoBg=document.getElementById('intro-video-bg');
   if(!intro||!video){ root.classList.remove('intro-on'); return; }
 
   let done=false;
   const finish=()=>{
     if(done) return;
     done=true;
+    // Bereken hoeveel de video moet doorzoomen om het scherm precies te vullen,
+    // zodat de laatste beelden schermvullend zijn en de overgang naadloos is
+    const iw=video.videoWidth||1764, ih=video.videoHeight||1176;
+    const vw=window.innerWidth, vh=window.innerHeight;
+    const containScale=Math.min(vw/iw,vh/ih);
+    if(containScale>0){
+      // Op brede schermen is dit ~1,35x en vult het beeld precies. Op staande
+      // schermen zou het 3x worden: dat begrenzen we, want zo'n sprong zie je
+      // wel en het beeld zou uit elkaar vallen. Daar volstaat de fade, omdat de
+      // achtergrond van de overlay dezelfde is als die van de hero.
+      const s=Math.min(Math.max(vw/iw,vh/ih)/containScale,1.6);
+      if(s>1&&isFinite(s)) intro.style.setProperty('--cover-scale',s.toFixed(3));
+    }
     intro.classList.add('intro-out');
     setTimeout(()=>{
       root.classList.remove('intro-on');
@@ -29,9 +43,10 @@
   document.getElementById('intro-skip').addEventListener('click',finish);
   document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') finish(); });
   video.addEventListener('error',finish);
-  // Begin de overgang net vóór het einde, zodat het overvloeit i.p.v. hapert
+  // De video is precies afgesneden op het warp-moment, dus de overgang start
+  // op het allerlaatste frame ('ended' is niet altijd betrouwbaar, vandaar beide)
   video.addEventListener('timeupdate',()=>{
-    if(video.duration && video.currentTime >= video.duration-0.35) finish();
+    if(video.duration && video.currentTime >= video.duration-0.06) finish();
   });
   video.addEventListener('ended',finish);
   // Veiligheidsnet: blijf nooit langer dan 6 seconden hangen
@@ -40,10 +55,21 @@
   // Bron en poster pas nu laden: bezoekers die de intro niet krijgen,
   // downloaden ook geen enkele byte ervan
   if(video.dataset.poster) video.poster=video.dataset.poster;
-  video.querySelectorAll('source').forEach(s=>{ s.src=s.dataset.src; });
-  video.load();
+  [video,videoBg].forEach(v=>{
+    if(!v) return;
+    v.querySelectorAll('source').forEach(s=>{ s.src=s.dataset.src; });
+    v.load();
+  });
   const p=video.play();
   if(p&&p.catch) p.catch(finish); // autoplay geblokkeerd -> meteen door naar de site
+  if(videoBg){
+    const pb=videoBg.play();
+    if(pb&&pb.catch) pb.catch(()=>{}); // achtergrond is puur decoratie
+    // Houd de onscherpe kopie gelijk lopen met de hoofdvideo
+    video.addEventListener('timeupdate',()=>{
+      if(Math.abs(videoBg.currentTime-video.currentTime)>0.12) videoBg.currentTime=video.currentTime;
+    });
+  }
 })();
 
 /* ============================================================
