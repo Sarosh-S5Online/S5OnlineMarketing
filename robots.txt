@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://s5onlinemarketing.com/sitemap.xml

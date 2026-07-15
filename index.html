@@ -6,7 +6,7 @@
 <meta name="robots" content="index, follow">
 <title>Online Marketing Heerlen | Marketingbureau Heerlen | S5Online Marketing</title>
 <meta name="description" content="S5Online Marketing biedt lokale, resultaatgerichte online marketingoplossingen. Vraag vandaag nog een gratis analyse aan en vergroot je zichtbaarheid, trek meer klanten aan en laat je bedrijf groeien.">
-<link rel="canonical" href="https://s5online.nl/">
+<link rel="canonical" href="https://s5onlinemarketing.com/">
 <meta property="og:title" content="Online Marketing Heerlen | S5Online Marketing">
 <meta property="og:description" content="Resultaatgerichte online marketing voor lokale bedrijven. Webdesign, Google Ads, SEO en Meta Ads vanuit Heerlen.">
 <meta property="og:type" content="website">
@@ -29,7 +29,7 @@
     "addressRegion": "Limburg",
     "addressCountry": "NL"
   },
-  "url": "https://s5online.nl/",
+  "url": "https://s5onlinemarketing.com/",
   "priceRange": "€€",
   "aggregateRating": {
     "@type": "AggregateRating",
@@ -87,25 +87,53 @@
   ]
 }
 </script>
+<script>
+/* Bepaalt vóór het renderen of de intro speelt, zodat je geen flits van de
+   pagina ziet. Alleen op de landingspagina, alleen de allereerste keer. */
+(function(){
+  try{
+    var p = location.pathname;
+    var isHome = (p === '/' || p === '/index.html' || p === '/index');
+    var seen = localStorage.getItem('s5_intro_seen');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(isHome && !seen && !reduce) document.documentElement.classList.add('intro-on');
+  }catch(e){}
+})();
+</script>
 </head>
 <body>
+
+<!-- ============ INTRO (alleen 1e bezoek op de landingspagina) ============ -->
+<div class="intro" id="intro" aria-hidden="true">
+  <!-- Onscherpe kopie die de zijkanten vult, zodat de video zelf volledig
+       in beeld past zonder bijgesneden te worden -->
+  <video id="intro-video-bg" class="intro-bg" muted playsinline preload="auto" tabindex="-1" aria-hidden="true">
+    <source data-src="intro.webm" type="video/webm">
+    <source data-src="intro.mp4" type="video/mp4">
+  </video>
+  <video id="intro-video" class="intro-main" muted playsinline preload="auto" data-poster="intro-poster.jpg" tabindex="-1">
+    <source data-src="intro.webm" type="video/webm">
+    <source data-src="intro.mp4" type="video/mp4">
+  </video>
+  <button class="intro-skip" id="intro-skip" type="button">Overslaan</button>
+</div>
 
 <!-- ============ HEADER ============ -->
 <header id="site-header">
   <div class="wrap">
     <nav>
-      <a href="index.html" class="logo">
+      <a href="/" class="logo">
         <span class="logo-mark">
           <img src="s5-logo.png" alt="S5Online logo">
         </span>
         <span class="logo-text">S5<em>Online</em><span class="logo-suffix"> Marketing</span></span>
       </a>
       <div class="nav-links" id="nav-links">
-        <a href="diensten.html">Diensten</a>
-        <a href="werk.html">Werk</a>
-        <a href="over-mij.html">Over mij</a>
-        <a href="contact.html">Contact</a>
-        <a href="strategiegesprek.html" class="btn btn-primary">Start je project</a>
+        <a href="/diensten">Diensten</a>
+        <a href="/werk">Werk</a>
+        <a href="/over-mij">Over mij</a>
+        <a href="/contact">Contact</a>
+        <a href="/strategiegesprek" class="btn btn-primary">Start je project</a>
       </div>
       <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -235,25 +263,25 @@
         <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 4v5"/></svg></div>
         <h3>Premium Webdesign</h3>
         <p>Websites die bezoekers omzetten in klanten. Geen templates. Elke pixel bewust, elk woord gekozen om te converteren. Snel, mobiel-eerst en gebouwd om te presteren.</p>
-        <a href="webdesign.html" class="service-link">Meer weten →</a>
+        <a href="/webdesign" class="service-link">Meer weten →</a>
       </div>
       <div class="service-card reveal">
         <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
         <h3>Google Ads</h3>
         <p>Bereik klanten die actief zoeken naar jouw dienst. Campagnes gebouwd voor winst, niet voor klikken. Elke euro werkt harder dan bij de concurrent.</p>
-        <a href="google-ads.html" class="service-link">Meer weten →</a>
+        <a href="/google-ads" class="service-link">Meer weten →</a>
       </div>
       <div class="service-card reveal">
         <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg></div>
         <h3>SEO &amp; Lokale SEO</h3>
         <p>Scoor bovenaan waar jouw klanten zoeken. Van lokale dominantie in jouw regio tot landelijke zichtbaarheid door heel Nederland. Organische groei die zich elke maand opstapelt.</p>
-        <a href="seo.html" class="service-link">Meer weten →</a>
+        <a href="/seo" class="service-link">Meer weten →</a>
       </div>
       <div class="service-card reveal">
         <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
         <h3>Meta Ads</h3>
         <p>Advertenties die de scroll stoppen. Scherpe targeting op Instagram en Facebook. Creatief, datagedreven en gebouwd voor ROAS die je voelt in je omzet.</p>
-        <a href="meta-ads.html" class="service-link">Meer weten →</a>
+        <a href="/meta-ads" class="service-link">Meer weten →</a>
       </div>
     </div>
   </div>
@@ -476,7 +504,7 @@
   <div class="wrap">
     <div class="footer-top">
       <div>
-        <a href="index.html" class="logo">
+        <a href="/" class="logo">
           <span class="logo-mark">
             <img src="s5-logo.png" alt="S5Online logo">
           </span>
@@ -487,33 +515,33 @@
       <div class="footer-cols">
         <div class="footer-col">
           <h4>Diensten</h4>
-          <a href="webdesign.html">Webdesign</a>
-          <a href="google-ads.html">Google Ads</a>
-          <a href="meta-ads.html">Meta Ads</a>
-          <a href="seo.html">SEO &amp; Lokale SEO</a>
+          <a href="/webdesign">Webdesign</a>
+          <a href="/google-ads">Google Ads</a>
+          <a href="/meta-ads">Meta Ads</a>
+          <a href="/seo">SEO &amp; Lokale SEO</a>
         </div>
         <div class="footer-col">
           <h4>Bedrijf</h4>
-          <a href="over-mij.html">Over mij</a>
-          <a href="werk.html">Werk</a>
-          <a href="contact.html">Contact</a>
-          <a href="strategiegesprek.html">Strategiegesprek</a>
-          <a href="gratis-demo.html">Gratis website demo</a>
-          <a href="seo-audit.html">Gratis SEO-audit</a>
+          <a href="/over-mij">Over mij</a>
+          <a href="/werk">Werk</a>
+          <a href="/contact">Contact</a>
+          <a href="/strategiegesprek">Strategiegesprek</a>
+          <a href="/gratis-demo">Gratis website demo</a>
+          <a href="/seo-audit">Gratis SEO-audit</a>
         </div>
         <div class="footer-col">
           <h4>Contact</h4>
           <a href="mailto:sarosh@s5onlinemarketing.com">sarosh@s5onlinemarketing.com</a>
-          <a href="contact.html">Heerlen, Limburg, Nederland</a>
+          <a href="/contact">Heerlen, Limburg, Nederland</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 S5Online Marketing, Heerlen, Nederland. Alle rechten voorbehouden. KVK 99661934</span>
       <span class="footer-legal">
-        <a href="privacy.html">Privacyverklaring</a>
-        <a href="voorwaarden.html">Algemene voorwaarden</a>
-        <a href="cookies.html">Cookiebeleid</a>
+        <a href="/privacy">Privacyverklaring</a>
+        <a href="/voorwaarden">Algemene voorwaarden</a>
+        <a href="/cookies">Cookiebeleid</a>
       </span>
     </div>
   </div>
