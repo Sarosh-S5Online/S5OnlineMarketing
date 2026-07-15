@@ -538,3 +538,34 @@ body.cc-open .sticky-cta{display:none !important;}
   .case-card:hover{transform:none;}
   .case-card:hover .case-media img{transform:none;}
 }
+
+/* ================= INTRO-OVERLAY (1e bezoek, landingspagina) ================= */
+.intro{display:none;}
+html.intro-on,html.intro-on body{overflow:hidden;}
+html.intro-on .intro{
+  display:block;position:fixed;inset:0;z-index:9999;
+  /* Zelfde achtergrond als de hero, zodat de randen op staande schermen
+     als huisstijl voelen en niet als een videospeler */
+  background:radial-gradient(90% 120% at 50% 0%,var(--violet-deep) 0%,var(--portal-bg-1) 65%);
+  opacity:1;transition:opacity .55s ease;
+}
+.intro video{width:100%;height:100%;object-fit:cover;display:block;background:var(--portal-bg-1);}
+/* Staand scherm (telefoon): volledig in beeld met donkere randen i.p.v. hard croppen.
+   Zodra er een 9:16-versie is, vervangt die dit gedrag. */
+@media(max-aspect-ratio:1/1){
+  .intro video{object-fit:contain;}
+}
+html.intro-on .intro.intro-out{opacity:0;pointer-events:none;}
+.intro-skip{
+  position:absolute;bottom:24px;right:24px;z-index:2;
+  font-family:var(--sans);font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.28);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-radius:100px;padding:10px 20px;cursor:pointer;
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.intro-skip:hover{background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.5);}
+.intro-skip:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+@media(max-width:680px){
+  .intro-skip{bottom:18px;right:18px;padding:9px 18px;font-size:12.5px;}
+}

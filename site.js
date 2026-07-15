@@ -1,4 +1,52 @@
 /* ============================================================
+   INTRO-VIDEO
+   Speelt alleen op de landingspagina en alleen bij het
+   allereerste bezoek. Wie de site binnenkomt (op welke pagina
+   dan ook) heeft zijn kans gehad: daarna nooit meer.
+   ============================================================ */
+(function(){
+  const root=document.documentElement;
+  // Markeer direct als 'gezien', op elke pagina. Zo speelt de intro niet
+  // alsnog als iemand later binnen de site naar Home navigeert.
+  try{ localStorage.setItem('s5_intro_seen','1'); }catch(e){}
+
+  if(!root.classList.contains('intro-on')) return;
+  const intro=document.getElementById('intro');
+  const video=document.getElementById('intro-video');
+  if(!intro||!video){ root.classList.remove('intro-on'); return; }
+
+  let done=false;
+  const finish=()=>{
+    if(done) return;
+    done=true;
+    intro.classList.add('intro-out');
+    setTimeout(()=>{
+      root.classList.remove('intro-on');
+      intro.remove();
+    },600);
+  };
+
+  document.getElementById('intro-skip').addEventListener('click',finish);
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') finish(); });
+  video.addEventListener('error',finish);
+  // Begin de overgang net vóór het einde, zodat het overvloeit i.p.v. hapert
+  video.addEventListener('timeupdate',()=>{
+    if(video.duration && video.currentTime >= video.duration-0.35) finish();
+  });
+  video.addEventListener('ended',finish);
+  // Veiligheidsnet: blijf nooit langer dan 6 seconden hangen
+  setTimeout(finish,6000);
+
+  // Bron en poster pas nu laden: bezoekers die de intro niet krijgen,
+  // downloaden ook geen enkele byte ervan
+  if(video.dataset.poster) video.poster=video.dataset.poster;
+  video.querySelectorAll('source').forEach(s=>{ s.src=s.dataset.src; });
+  video.load();
+  const p=video.play();
+  if(p&&p.catch) p.catch(finish); // autoplay geblokkeerd -> meteen door naar de site
+})();
+
+/* ============================================================
    TRACKING-CONFIG
    Vul hier je ID's in zodra je ze hebt. Zolang ze leeg zijn
    wordt er niets geladen (de cookiebanner werkt wel gewoon).

@@ -107,6 +107,20 @@ Open daarna `http://localhost:5050` in je browser.
 
 ---
 
+## 🎬 Intro-video
+
+`intro.mp4` / `intro.webm` spelen als volledig scherm bij het **allereerste bezoek**
+op de landingspagina (`/`). Daarna nooit meer: dat wordt onthouden in `localStorage`
+onder de sleutel `s5_intro_seen`.
+
+- Komt iemand binnen op een andere pagina (bijv. via Google op `/seo`)? Dan wordt de
+  intro direct als "gezien" gemarkeerd en speelt hij ook later niet meer.
+- Er wordt **geen enkele byte** van de video geladen voor wie hem niet krijgt.
+- Op staande schermen staat de video volledig in beeld met huisstijl-randen. Zodra er
+  een 9:16-versie is, kan die erin: voeg hem toe als `intro-mobile.mp4/webm` en pas de
+  `<source>`-regels in `index.html` aan met een `media`-attribuut.
+- Testen? Wis `localStorage` (F12 → Console → `localStorage.clear()`) en herlaad `/`.
+
 ## URL's (SEO)
 
 `vercel.json` zet **cleanUrls** aan. Daardoor worden de adressen netjes:

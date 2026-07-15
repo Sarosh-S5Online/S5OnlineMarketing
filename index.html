@@ -87,8 +87,30 @@
   ]
 }
 </script>
+<script>
+/* Bepaalt vóór het renderen of de intro speelt, zodat je geen flits van de
+   pagina ziet. Alleen op de landingspagina, alleen de allereerste keer. */
+(function(){
+  try{
+    var p = location.pathname;
+    var isHome = (p === '/' || p === '/index.html' || p === '/index');
+    var seen = localStorage.getItem('s5_intro_seen');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(isHome && !seen && !reduce) document.documentElement.classList.add('intro-on');
+  }catch(e){}
+})();
+</script>
 </head>
 <body>
+
+<!-- ============ INTRO (alleen 1e bezoek op de landingspagina) ============ -->
+<div class="intro" id="intro" aria-hidden="true">
+  <video id="intro-video" muted playsinline preload="auto" data-poster="intro-poster.jpg" tabindex="-1">
+    <source data-src="intro.webm" type="video/webm">
+    <source data-src="intro.mp4" type="video/mp4">
+  </video>
+  <button class="intro-skip" id="intro-skip" type="button">Overslaan</button>
+</div>
 
 <!-- ============ HEADER ============ -->
 <header id="site-header">
