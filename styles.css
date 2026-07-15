@@ -204,14 +204,24 @@
   /* ================= SERVICES ================= */
   .services{background:var(--bg-alt);padding-bottom:80px;}
   .service-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
-  .service-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:34px 26px;transition:all .3s ease;}
+  /* De hele kaart is een link, niet alleen het regeltje onderaan. Flex met
+     margin-top:auto op de link houdt die pijl netjes onderin uitgelijnd, ook
+     als de ene kaart meer tekst heeft dan de andere. */
+  .service-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:34px 26px;transition:all .3s ease;
+    display:flex;flex-direction:column;color:inherit;text-decoration:none;}
   .service-card:hover{transform:translateY(-6px);box-shadow:0 24px 44px -20px rgba(58,33,112,0.22);border-color:transparent;}
+  .service-card:focus-visible{outline:2px solid var(--violet);outline-offset:3px;}
   .service-icon{width:46px;height:46px;border-radius:13px;background:var(--grad-brand-soft);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
   .service-icon svg{width:22px;height:22px;stroke:var(--violet);}
   .service-card h3{font-size:19px;margin-bottom:10px;font-weight:600;}
-  .service-card p{font-size:14.5px;color:var(--ink-soft);margin-bottom:14px;}
-  .service-link{font-size:13.5px;font-weight:600;color:var(--violet);display:inline-flex;align-items:center;gap:4px;transition:gap .2s ease;}
-  .service-link:hover{gap:8px;}
+  .service-card p{font-size:14.5px;color:var(--ink-soft);margin-bottom:18px;}
+  /* Zichtbare knop onderaan de kaart. De hele kaart is klikbaar, dus dit is
+     een span en geen link: anders krijg je een link in een link. */
+  .service-link{font-size:13.5px;font-weight:700;color:#fff;background:var(--grad-brand);
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    padding:12px 18px;border-radius:100px;margin-top:auto;
+    transition:gap .2s ease,box-shadow .3s ease;}
+  .service-card:hover .service-link{gap:10px;box-shadow:0 12px 26px -10px rgba(108,79,224,0.6);}
 
   /* ================= DIFFERENTIATOR ================= */
   .differ{background:var(--bg);}
@@ -295,6 +305,16 @@
   .btn-whatsapp{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#07130C;font-weight:700;font-size:14.5px;padding:15px 22px;border-radius:100px;transition:all .25s ease;}
   .btn-whatsapp:hover{transform:translateY(-2px);box-shadow:0 14px 28px -10px rgba(37,211,102,0.5);}
   .form-note{font-size:11.5px;color:rgba(255,255,255,0.5);text-align:center;margin:2px 0 0;line-height:1.5;}
+  /* Keuze tussen WhatsApp en e-mail, bovenaan het formulier */
+  .form-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin-bottom:4px;
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:100px;}
+  .form-switch-btn{font-family:var(--sans);font-size:13.5px;font-weight:600;color:rgba(255,255,255,0.7);
+    background:none;border:0;border-radius:100px;padding:10px 12px;cursor:pointer;
+    transition:background .2s ease,color .2s ease;}
+  .form-switch-btn:hover{color:#fff;}
+  .form-switch-btn.is-active{background:var(--grad-brand);color:#fff;}
+  .form-switch-btn:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+  .form-optional{font-weight:500;opacity:0.6;text-transform:none;}
 
   /* ================= FOOTER ================= */
   footer{padding:64px 0 36px;}
@@ -401,6 +421,22 @@
 .feature-card .feature-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--violet);margin-bottom:10px;}
 
 /* Simple centered CTA */
+/* ================= 404 EN BEDANKT ================= */
+.status-hero{text-align:center;}
+.status-hero .wrap{display:flex;flex-direction:column;align-items:center;}
+.status-hero h1,.status-hero p{margin-left:auto;margin-right:auto;}
+.status-hero p{max-width:600px;}
+.status-hero .hero-ctas{justify-content:center;}
+/* Het vinkje op de bedankt-pagina */
+.status-mark{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin-bottom:26px;color:#fff;background:var(--grad-brand);
+  box-shadow:0 18px 40px -12px rgba(108,79,224,0.7);}
+.status-mark svg{width:34px;height:34px;}
+/* Het grote 404-cijfer */
+.status-code{font-family:var(--serif);font-size:clamp(76px,13vw,150px);line-height:1;font-weight:600;
+  background:var(--grad-cta);-webkit-background-clip:text;background-clip:text;color:transparent;
+  display:block;margin-bottom:10px;}
+
 .cta-simple{text-align:center;}
 .cta-simple h2{color:#fff;font-size:clamp(30px,3.8vw,48px);margin:16px 0 18px;}
 .cta-simple h2 em{font-style:normal;background:var(--grad-cta);-webkit-background-clip:text;background-clip:text;color:transparent;}
@@ -487,6 +523,11 @@
 .form-light .form-row input::placeholder,.form-light .form-row textarea::placeholder{color:var(--muted);}
 .form-light .form-row input:focus,.form-light .form-row textarea:focus{outline:none;border-color:var(--violet);background:#fff;}
 .form-light .form-note{color:var(--muted);}
+.form-light .form-switch{background:var(--bg);border:1px solid var(--line);}
+.form-light .form-switch-btn{color:var(--ink-soft);}
+.form-light .form-switch-btn:hover{color:var(--ink);}
+.form-light .form-switch-btn.is-active{background:var(--grad-brand);color:#fff;}
+.form-light .form-switch-btn:focus-visible{outline:2px solid var(--violet);}
 
 /* Dark closing section (sits just above the light footer on booking/contact pages) */
 .section-dark{background:radial-gradient(90% 120% at 50% 0%,var(--violet-deep) 0%,var(--portal-bg-1) 65%);color:#fff;}
@@ -517,6 +558,12 @@
 .cc-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 .cc-actions .btn{font-size:14px;padding:12px 22px;}
 .btn-outline{border:1.5px solid var(--line);color:var(--ink);background:var(--white);}
+/* Weigeren moet net zo makkelijk zijn als accepteren. Daarom is dit een even
+   grote, even opvallende, gevulde knop en geen dun lijntje ernaast: een
+   zwakkere weigerknop geldt als sturend en dat mag niet van de AP. */
+.btn-neutral{background:var(--ink);color:#fff;border:1.5px solid var(--ink);
+  box-shadow:0 8px 22px -8px rgba(20,16,31,0.45);}
+.btn-neutral:hover{background:#000;border-color:#000;}
 .btn-outline:hover{border-color:var(--violet);color:var(--violet);}
 .cc-link{background:none;border:none;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:underline;padding:12px 6px;cursor:pointer;font-family:var(--sans);}
 .cc-link:hover{color:var(--violet);}

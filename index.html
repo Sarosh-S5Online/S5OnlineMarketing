@@ -162,7 +162,7 @@
       <h1 class="reveal">Marketing die opvalt.<br>Websites die <em>verkopen.</em></h1>
       <p class="lead reveal">Jouw concurrent groeit online. Jij nog niet. Dat veranderen we. Premium webdesign, Google Ads, Meta Ads en SEO, gebouwd voor ondernemers die resultaat willen zien.</p>
       <div class="hero-ctas reveal">
-        <a href="#contact" class="btn btn-primary">Boek een gratis strategiegesprek</a>
+        <a href="/strategiegesprek" class="btn btn-primary">Boek een gratis strategiegesprek</a>
         <a href="#werkwijze" class="btn btn-ghost">Hoe het werkt</a>
       </div>
       <div class="hero-proof reveal">
@@ -252,7 +252,7 @@
       <div class="pain-solution reveal">
         <h3>Daarom bestaat<br><em>S5Online Marketing.</em></h3>
         <p>Geen excuses, geen vaag gedoe. Wij laten jouw bedrijf groeien met marketing die werkt. En je spreekt altijd direct met de persoon die het doet.</p>
-        <a href="#contact" class="btn btn-primary">Plan een gratis strategiegesprek</a>
+        <a href="/strategiegesprek" class="btn btn-primary">Plan een gratis strategiegesprek</a>
       </div>
     </div>
   </div>
@@ -267,30 +267,30 @@
       <p>Geen pakketten. Geen one-size-fits-all. Elke dienst draait om 1 ding: jou echte, meetbare resultaten opleveren.</p>
     </div>
     <div class="service-grid">
-      <div class="service-card reveal">
+      <a href="/webdesign" class="service-card reveal">
         <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 4v5"/></svg></div>
         <h3>Premium Webdesign</h3>
         <p>Websites die bezoekers omzetten in klanten. Geen templates. Elke pixel bewust, elk woord gekozen om te converteren. Snel, mobiel-eerst en gebouwd om te presteren.</p>
-        <a href="/webdesign" class="service-link">Meer weten →</a>
-      </div>
-      <div class="service-card reveal">
+        <span class="service-link">Bekijk webdesign →</span>
+      </a>
+      <a href="/google-ads" class="service-card reveal">
         <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
         <h3>Google Ads</h3>
         <p>Bereik klanten die actief zoeken naar jouw dienst. Campagnes gebouwd voor winst, niet voor klikken. Elke euro werkt harder dan bij de concurrent.</p>
-        <a href="/google-ads" class="service-link">Meer weten →</a>
-      </div>
-      <div class="service-card reveal">
+        <span class="service-link">Bekijk Google Ads →</span>
+      </a>
+      <a href="/seo" class="service-card reveal">
         <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg></div>
         <h3>SEO &amp; Lokale SEO</h3>
         <p>Scoor bovenaan waar jouw klanten zoeken. Van lokale dominantie in jouw regio tot landelijke zichtbaarheid door heel Nederland. Organische groei die zich elke maand opstapelt.</p>
-        <a href="/seo" class="service-link">Meer weten →</a>
-      </div>
-      <div class="service-card reveal">
+        <span class="service-link">Bekijk SEO →</span>
+      </a>
+      <a href="/meta-ads" class="service-card reveal">
         <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
         <h3>Meta Ads</h3>
         <p>Advertenties die de scroll stoppen. Scherpe targeting op Instagram en Facebook. Creatief, datagedreven en gebouwd voor ROAS die je voelt in je omzet.</p>
-        <a href="/meta-ads" class="service-link">Meer weten →</a>
-      </div>
+        <span class="service-link">Bekijk Meta Ads →</span>
+      </a>
     </div>
   </div>
 </section>
@@ -310,7 +310,7 @@
       <h2>Marketing gebouwd rond jouw <em>resultaten.</em> Niet onze deliverables.</h2>
       <p>De meeste bureaus focussen op output. Ze leveren een website, draaien wat advertenties, sturen een rapport. Hun eigen KPI's gehaald. Door naar de volgende klant.</p>
       <p>Dat is niet hoe wij werken. Wij meten alles af aan jouw groei. Meer klanten, meer omzet, minder gedoe. Dat is waar het om draait.</p>
-      <a href="#contact" class="btn btn-primary" style="margin-top:12px;">Ontdek wat we voor jou kunnen doen</a>
+      <a href="/diensten" class="btn btn-primary" style="margin-top:12px;">Ontdek wat we voor jou kunnen doen</a>
     </div>
     <div class="usp-list reveal">
       <div class="usp-item">
@@ -481,28 +481,36 @@
       <h2>Stop met twijfelen. Start met <em>groeien.</em></h2>
       <p>Elke dag zonder een goede online strategie kost je klanten. Plan een gratis strategiegesprek en ontdek wat er mogelijk is voor jouw bedrijf.</p>
     </div>
-    <form class="cta-form reveal" id="whatsapp-form">
+    <form class="cta-form reveal" id="contact-form"
+          data-intro="Hoi Sarosh, ik wil graag meer weten over S5Online Marketing."
+          data-bericht-label="Bericht"
+          data-onderwerp="Aanvraag via de website">
+      <div class="form-switch" role="group" aria-label="Kies hoe je contact opneemt">
+        <button type="button" class="form-switch-btn is-active" data-kanaal="whatsapp" aria-pressed="true">WhatsApp</button>
+        <button type="button" class="form-switch-btn" data-kanaal="email" aria-pressed="false">E-mail</button>
+      </div>
       <div class="form-row">
         <label for="cf-name">Naam</label>
-        <input type="text" id="cf-name" name="naam" required placeholder="Jouw naam">
+        <input type="text" id="cf-name" name="naam" required autocomplete="name" placeholder="Jouw naam">
       </div>
       <div class="form-row">
-        <label for="cf-business">Bedrijfsnaam</label>
-        <input type="text" id="cf-business" name="bedrijf" required placeholder="Naam van je bedrijf">
+        <label for="cf-email">E-mailadres</label>
+        <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder="jij@bedrijf.nl">
       </div>
       <div class="form-row">
-        <label for="cf-contact">Telefoon of e-mail</label>
-        <input type="text" id="cf-contact" name="contact" required placeholder="06 12345678 of jij@bedrijf.nl">
+        <label for="cf-phone">Telefoonnummer <span class="form-optional">optioneel</span></label>
+        <input type="tel" id="cf-phone" name="telefoon" autocomplete="tel" placeholder="06 12345678">
+      </div>
+      <div class="form-row">
+        <label for="cf-business">Bedrijfsnaam <span class="form-optional">optioneel</span></label>
+        <input type="text" id="cf-business" name="bedrijf" autocomplete="organization" placeholder="Naam van je bedrijf">
       </div>
       <div class="form-row">
         <label for="cf-message">Waar wil je het over hebben?</label>
         <textarea id="cf-message" name="bericht" rows="3" placeholder="Bijv. ik wil meer klanten via Google Ads"></textarea>
       </div>
-      <button type="submit" class="btn btn-whatsapp">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.87 9.87 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14a3.1 3.1 0 0 1-2.16 1.55c-.57.12-1.31.22-3.81-.82-2.6-1.09-4.34-3.53-4.48-3.7-.13-.17-1.06-1.41-1.06-2.7 0-1.28.67-1.9.91-2.16.24-.26.53-.32.7-.32h.5c.16 0 .38-.06.6.46.24.56.8 1.95.87 2.09.07.14.11.3.02.48-.09.18-.14.29-.27.45-.14.16-.29.35-.41.47-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.96 1.25 2.24 1.39.28.14.44.12.61-.07.16-.2.7-.81.89-1.09.19-.28.37-.23.63-.14.26.09 1.64.77 1.92.91.28.14.47.21.53.33.07.12.07.68-.16 1.34Z"/></svg>
-        Verstuur via WhatsApp
-      </button>
-      <p class="form-note">Opent WhatsApp met je gegevens al ingevuld. Jij verstuurt het bericht zelf, ik reageer meestal binnen een paar uur.</p>
+      <button type="submit" class="btn btn-whatsapp" id="cf-submit"></button>
+      <p class="form-note" id="cf-note"></p>
     </form>
   </div>
 </section>
@@ -559,7 +567,7 @@
 <div class="sticky-cta">
   <div class="wrap sticky-cta-inner">
     <span class="sticky-cta-text">Klaar om je bedrijf te laten groeien?</span>
-    <a href="#contact" class="btn btn-primary">Gratis strategiegesprek</a>
+    <a href="/strategiegesprek" class="btn btn-primary">Gratis strategiegesprek</a>
   </div>
 </div>
 
