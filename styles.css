@@ -501,6 +501,10 @@ header:not(.solid) .lang-switch a:hover{color:#fff;}
   display:block;margin-bottom:10px;}
 
 .cta-simple{text-align:center;}
+/* De meeste CTA-secties hebben een kale knop, die centreert met text-align mee.
+   Staat de knop in een .hero-ctas, dan is dat een flexbox en doet text-align
+   niets: die moet je apart centreren. */
+.cta-simple .hero-ctas{justify-content:center;margin-bottom:0;}
 .cta-simple h2{color:#fff;font-size:clamp(30px,3.8vw,48px);margin:16px 0 18px;}
 .cta-simple h2 em{font-style:normal;background:var(--grad-cta);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .cta-simple p{color:#B8B2D8;font-size:17px;max-width:480px;margin:0 auto 30px;}
