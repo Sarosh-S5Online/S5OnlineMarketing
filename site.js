@@ -181,37 +181,109 @@ const ccApply=(c)=>{
   if(c.marketing) ccLoadMeta();
 };
 
+/* ============================================================
+   TEKSTEN
+   De JS bouwt zelf de cookiebanner en de knoppen van het
+   formulier, dus die teksten staan hier en niet in de HTML.
+   Welke taal het wordt, leest hij af aan <html lang>.
+   De juridische pagina's zijn alleen in het Nederlands, dus
+   daar wijzen beide talen naar dezelfde links.
+   ============================================================ */
+const S5_LANG = document.documentElement.lang === 'en' ? 'en' : 'nl';
+
+const S5_TEKST = {
+  nl: {
+    ccKop: 'Wij gebruiken cookies',
+    ccIntro: 'Noodzakelijke cookies zorgen dat de site werkt. Analytische en marketingcookies plaatsen we alleen met jouw toestemming. Lees meer in ons <a href="/cookies">cookiebeleid</a> en de <a href="/privacy">privacyverklaring</a>.',
+    ccNoodzakelijk: 'Noodzakelijk',
+    ccNoodzakelijkUit: 'Nodig om de website te laten werken en om jouw cookiekeuze te onthouden. Deze staan altijd aan.',
+    ccNoodzakelijkLabel: 'Noodzakelijke cookies (altijd aan)',
+    ccAnalytisch: 'Analytisch',
+    ccAnalytischUit: 'Hiermee zien we hoe bezoekers de site gebruiken, zodat we hem kunnen verbeteren (Google Analytics).',
+    ccAnalytischLabel: 'Analytische cookies',
+    ccMarketing: 'Marketing',
+    ccMarketingUit: 'Hiermee meten we onze advertenties en tonen we relevante advertenties (Google Ads, Meta-pixel).',
+    ccMarketingLabel: 'Marketingcookies',
+    ccAccepteren: 'Alles accepteren',
+    ccWeigeren: 'Alleen noodzakelijk',
+    ccVoorkeuren: 'Voorkeuren aanpassen',
+    ccOpslaan: 'Voorkeuren opslaan',
+    ccDialoog: 'Cookievoorkeuren',
+    ccFooter: 'Cookie-instellingen',
+    fmWhatsApp: 'Verstuur via WhatsApp',
+    fmEmail: 'Verstuur via e-mail',
+    fmNotitieWa: 'Opent WhatsApp met je gegevens al ingevuld. Jij verstuurt het bericht zelf. Ik reageer binnen 24 uur.',
+    fmNotitieMail: 'Opent je e-mailprogramma met alles al ingevuld. Jij verstuurt de mail zelf. Ik reageer binnen 24 uur.',
+    fmNaam: 'Naam', fmEmailLabel: 'E-mail', fmTelefoon: 'Telefoon', fmBedrijf: 'Bedrijf',
+    fmBerichtStandaard: 'Bericht',
+    fmIntroStandaard: 'Hoi Sarosh, ik wil graag meer weten over S5Online Marketing.',
+    fmOnderwerpStandaard: 'Aanvraag via de website',
+    bedanktUrl: '/bedankt',
+    videoTitel: 'S5Online Marketing, boodschap van de oprichter'
+  },
+  en: {
+    ccKop: 'We use cookies',
+    ccIntro: 'Necessary cookies keep the site working. We only place analytics and marketing cookies with your consent. Read more in our <a href="/cookies">cookie policy</a> and <a href="/privacy">privacy statement</a> (both in Dutch).',
+    ccNoodzakelijk: 'Necessary',
+    ccNoodzakelijkUit: 'Needed to make the website work and to remember your cookie choice. These are always on.',
+    ccNoodzakelijkLabel: 'Necessary cookies (always on)',
+    ccAnalytisch: 'Analytics',
+    ccAnalytischUit: 'Lets us see how visitors use the site so we can improve it (Google Analytics).',
+    ccAnalytischLabel: 'Analytics cookies',
+    ccMarketing: 'Marketing',
+    ccMarketingUit: 'Lets us measure our ads and show relevant ones (Google Ads, Meta pixel).',
+    ccMarketingLabel: 'Marketing cookies',
+    ccAccepteren: 'Accept all',
+    ccWeigeren: 'Necessary only',
+    ccVoorkeuren: 'Manage preferences',
+    ccOpslaan: 'Save preferences',
+    ccDialoog: 'Cookie preferences',
+    ccFooter: 'Cookie settings',
+    fmWhatsApp: 'Send via WhatsApp',
+    fmEmail: 'Send via email',
+    fmNotitieWa: 'Opens WhatsApp with your details filled in. You send the message yourself. I reply within 24 hours.',
+    fmNotitieMail: 'Opens your email app with everything filled in. You send the message yourself. I reply within 24 hours.',
+    fmNaam: 'Name', fmEmailLabel: 'Email', fmTelefoon: 'Phone', fmBedrijf: 'Company',
+    fmBerichtStandaard: 'Message',
+    fmIntroStandaard: 'Hi Sarosh, I would like to know more about S5Online Marketing.',
+    fmOnderwerpStandaard: 'Enquiry via the website',
+    bedanktUrl: '/en/thank-you',
+    videoTitel: 'S5Online Marketing, a message from the founder'
+  }
+};
+const T = S5_TEKST[S5_LANG];
+
 const CC_HTML=`
-  <h2>Wij gebruiken cookies</h2>
-  <p>Noodzakelijke cookies zorgen dat de site werkt. Analytische en marketingcookies plaatsen we alleen met jouw toestemming. Lees meer in ons <a href="/cookies">cookiebeleid</a> en de <a href="/privacy">privacyverklaring</a>.</p>
+  <h2>${T.ccKop}</h2>
+  <p>${T.ccIntro}</p>
   <div class="cc-prefs">
     <div class="cc-row">
       <div class="cc-row-text">
-        <h3>Noodzakelijk</h3>
-        <p>Nodig om de website te laten werken en om jouw cookiekeuze te onthouden. Deze staan altijd aan.</p>
+        <h3>${T.ccNoodzakelijk}</h3>
+        <p>${T.ccNoodzakelijkUit}</p>
       </div>
-      <label class="cc-toggle"><input type="checkbox" checked disabled aria-label="Noodzakelijke cookies (altijd aan)"><span class="cc-track"></span></label>
+      <label class="cc-toggle"><input type="checkbox" checked disabled aria-label="${T.ccNoodzakelijkLabel}"><span class="cc-track"></span></label>
     </div>
     <div class="cc-row">
       <div class="cc-row-text">
-        <h3>Analytisch</h3>
-        <p>Hiermee zien we hoe bezoekers de site gebruiken, zodat we hem kunnen verbeteren (Google Analytics).</p>
+        <h3>${T.ccAnalytisch}</h3>
+        <p>${T.ccAnalytischUit}</p>
       </div>
-      <label class="cc-toggle"><input type="checkbox" id="cc-analytics" aria-label="Analytische cookies"><span class="cc-track"></span></label>
+      <label class="cc-toggle"><input type="checkbox" id="cc-analytics" aria-label="${T.ccAnalytischLabel}"><span class="cc-track"></span></label>
     </div>
     <div class="cc-row">
       <div class="cc-row-text">
-        <h3>Marketing</h3>
-        <p>Hiermee meten we onze advertenties en tonen we relevante advertenties (Google Ads, Meta-pixel).</p>
+        <h3>${T.ccMarketing}</h3>
+        <p>${T.ccMarketingUit}</p>
       </div>
-      <label class="cc-toggle"><input type="checkbox" id="cc-marketing" aria-label="Marketingcookies"><span class="cc-track"></span></label>
+      <label class="cc-toggle"><input type="checkbox" id="cc-marketing" aria-label="${T.ccMarketingLabel}"><span class="cc-track"></span></label>
     </div>
   </div>
   <div class="cc-actions">
-    <button class="btn btn-primary" id="cc-accept" type="button">Alles accepteren</button>
-    <button class="btn btn-neutral" id="cc-reject" type="button">Alleen noodzakelijk</button>
-    <button class="cc-link" id="cc-toggle-prefs" type="button">Voorkeuren aanpassen</button>
-    <button class="btn btn-outline" id="cc-save" type="button" style="display:none;">Voorkeuren opslaan</button>
+    <button class="btn btn-primary" id="cc-accept" type="button">${T.ccAccepteren}</button>
+    <button class="btn btn-neutral" id="cc-reject" type="button">${T.ccWeigeren}</button>
+    <button class="cc-link" id="cc-toggle-prefs" type="button">${T.ccVoorkeuren}</button>
+    <button class="btn btn-outline" id="cc-save" type="button" style="display:none;">${T.ccOpslaan}</button>
   </div>`;
 
 const ccInit=()=>{
@@ -219,7 +291,7 @@ const ccInit=()=>{
   banner.className='cc-banner';
   banner.id='cc-banner';
   banner.setAttribute('role','dialog');
-  banner.setAttribute('aria-label','Cookievoorkeuren');
+  banner.setAttribute('aria-label',T.ccDialoog);
   banner.innerHTML=CC_HTML;
   document.body.appendChild(banner);
 
@@ -262,7 +334,7 @@ const ccInit=()=>{
     link.type='button';
     link.className='cc-link';
     link.style.cssText='padding:0;font-weight:inherit;font-size:inherit;color:inherit;text-decoration:none;';
-    link.textContent='Cookie-instellingen';
+    link.textContent=T.ccFooter;
     link.addEventListener('click',()=>open(true));
     legal.appendChild(link);
   }
@@ -350,6 +422,7 @@ if(heroVideo){
     const player=document.createElement('wistia-player');
     player.setAttribute('media-id',wistiaId);
     player.setAttribute('aspect','0.5625');
+    player.setAttribute('title',T.videoTitel);
     player.setAttribute('autoplay','true');
 
     // Poster en spinner blijven staan tot de video echt beeld geeft. Het
@@ -390,12 +463,12 @@ if(contactForm){
 
   const toonKanaal=()=>{
     const isWa=kanaal==='whatsapp';
-    knop.innerHTML=(isWa?ICOON_WA:ICOON_MAIL)+(isWa?' Verstuur via WhatsApp':' Verstuur via e-mail');
+    knop.innerHTML=(isWa?ICOON_WA:ICOON_MAIL)+' '+(isWa?T.fmWhatsApp:T.fmEmail);
     knop.classList.toggle('btn-whatsapp',isWa);
     knop.classList.toggle('btn-primary',!isWa);
     notitie.textContent=isWa
-      ? 'Opent WhatsApp met je gegevens al ingevuld. Jij verstuurt het bericht zelf. Ik reageer binnen 24 uur.'
-      : 'Opent je e-mailprogramma met alles al ingevuld. Jij verstuurt de mail zelf. Ik reageer binnen 24 uur.';
+      ? T.fmNotitieWa
+      : T.fmNotitieMail;
     contactForm.querySelectorAll('.form-switch-btn').forEach(b=>{
       const actief=b.dataset.kanaal===kanaal;
       b.classList.toggle('is-active',actief);
@@ -412,21 +485,21 @@ if(contactForm){
   // met een leeg veld. Hier hoeft niets meer overgeslagen te worden.
   const regels=()=>{
     const v=(n)=>{ const el=contactForm.querySelector(`[name="${n}"]`); return el?el.value.trim():''; };
-    const berichtLabel=contactForm.dataset.berichtLabel||'Bericht';
+    const berichtLabel=contactForm.dataset.berichtLabel||T.fmBerichtStandaard;
     return [
-      `Naam: ${v('naam')}`,
-      `E-mail: ${v('email')}`,
-      `Telefoon: ${v('telefoon')}`,
-      `Bedrijf: ${v('bedrijf')}`,
+      `${T.fmNaam}: ${v('naam')}`,
+      `${T.fmEmailLabel}: ${v('email')}`,
+      `${T.fmTelefoon}: ${v('telefoon')}`,
+      `${T.fmBedrijf}: ${v('bedrijf')}`,
       `${berichtLabel}: ${v('bericht')}`
     ].join('\n');
   };
 
-  const naarBedankt=()=>{ window.location.href='/bedankt'; };
+  const naarBedankt=()=>{ window.location.href=T.bedanktUrl; };
 
   contactForm.addEventListener('submit',(e)=>{
     e.preventDefault();
-    const intro=contactForm.dataset.intro||'Hoi Sarosh, ik wil graag meer weten over S5Online Marketing.';
+    const intro=contactForm.dataset.intro||T.fmIntroStandaard;
     const tekst=`${intro}\n\n${regels()}`;
 
     if(kanaal==='whatsapp'){
@@ -439,7 +512,7 @@ if(contactForm){
     // E-mail. Zolang er geen verzenddienst is ingesteld, openen we de mailapp
     // van de bezoeker met alles ingevuld. Dat komt gewoon aan en er komt geen
     // enkele externe partij aan de gegevens te pas.
-    const onderwerp=contactForm.dataset.onderwerp||'Aanvraag via de website';
+    const onderwerp=contactForm.dataset.onderwerp||T.fmOnderwerpStandaard;
     const a=document.createElement('a');
     a.href=`mailto:${S5_CONFIG.contactEmail}?subject=${encodeURIComponent(onderwerp)}&body=${encodeURIComponent(tekst)}`;
     document.body.appendChild(a); a.click(); a.remove();

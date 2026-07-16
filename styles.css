@@ -356,7 +356,15 @@
     .hero-bg{background-position:center 30%,center;}
     .hero-bg::after{background:radial-gradient(90% 55% at 50% 0%,rgba(58,33,112,0.55) 0%,rgba(58,33,112,0) 60%),linear-gradient(180deg,rgba(8,6,15,0.75) 0%,rgba(58,33,112,0.38) 30%,rgba(58,33,112,0.42) 65%,rgba(8,6,15,0.85) 100%);}
   }
-  @media(max-width:767px){
+  /* Met de taalknop erbij heeft de nav ruim 760px nodig. Tussen 900 en 1080px
+     werd het daardoor krap, dus daar halen we wat uit de tussenruimte. */
+  @media(max-width:1080px){
+    .nav-links{gap:24px;}
+  }
+  /* Het hamburgermenu sprong pas in bij 767px. Daaronder paste alles net niet
+     meer: de knop "Start je project" liep van het scherm. Nu klapt het menu in
+     op hetzelfde punt waar het logo zijn achternaam al inkort. */
+  @media(max-width:900px){
     .mobile-toggle{display:flex;}
     .nav-links{position:fixed;top:64px;left:16px;right:16px;background:var(--white);border:1px solid var(--line);border-radius:18px;flex-direction:column;align-items:stretch;gap:2px;padding:10px;box-shadow:0 20px 44px -18px rgba(58,33,112,0.25);transform:translateY(-12px);opacity:0;pointer-events:none;transition:all .25s ease;}
     .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto;}
@@ -393,6 +401,62 @@
   @media(prefers-reduced-motion:reduce){.reveal{transition:none;opacity:1;transform:none;}}
 
 /* ================= SUBPAGE SHARED ================= */
+/* ================= TAALKNOP ================= */
+.lang-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;flex:none;
+  border:1px solid var(--line);border-radius:100px;background:var(--white);}
+.lang-switch a,.lang-switch span{
+  font-family:var(--sans);font-size:12.5px;font-weight:700;letter-spacing:0.04em;
+  padding:5px 11px;border-radius:100px;color:var(--muted);line-height:1;
+  transition:color .2s ease,background .2s ease;}
+.lang-switch a:hover{color:var(--ink);}
+.lang-switch .is-active{background:var(--grad-brand);color:#fff;}
+.lang-switch a:focus-visible{outline:2px solid var(--violet);outline-offset:2px;}
+/* Boven de hero is de header doorzichtig, dus daar moet de knop licht zijn */
+header:not(.solid) .lang-switch{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);}
+header:not(.solid) .lang-switch a{color:rgba(255,255,255,0.8);}
+header:not(.solid) .lang-switch a:hover{color:#fff;}
+@media(max-width:900px){
+  /* In het uitklapmenu staat de knop op zijn eigen regel, gecentreerd */
+  .lang-switch{align-self:center;margin-top:4px;}
+}
+
+/* ================= SOCIALS IN DE FOOTER ================= */
+.footer-social{display:flex;gap:10px;margin-top:20px;}
+.footer-social a{width:38px;height:38px;border-radius:10px;flex:none;
+  border:1px solid var(--line);background:var(--white);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  transition:color .2s ease,background .2s ease,border-color .2s ease,transform .2s ease;}
+.footer-social svg{width:17px;height:17px;}
+.footer-social a:hover{color:#fff;background:var(--grad-brand);border-color:transparent;transform:translateY(-2px);}
+.footer-social a:focus-visible{outline:2px solid var(--violet);outline-offset:2px;}
+
+/* ================= NEWS ================= */
+.news-empty{max-width:640px;margin:0 auto;text-align:center;
+  background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:56px 40px;}
+.news-empty-ic{width:58px;height:58px;border-radius:15px;background:var(--grad-brand-soft);
+  display:inline-flex;align-items:center;justify-content:center;margin-bottom:22px;}
+.news-empty-ic svg{width:26px;height:26px;stroke:var(--violet);}
+.news-empty h2{font-size:27px;margin-bottom:14px;}
+.news-empty p{color:var(--ink-soft);font-size:15.5px;}
+.news-empty-sub{margin-top:18px;color:var(--muted)!important;font-size:14.5px!important;}
+.news-empty .hero-ctas{justify-content:center;margin:26px 0 0;}
+/* Voor straks, zodra er artikelen zijn */
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.news-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px 26px;display:flex;flex-direction:column;color:inherit;text-decoration:none;
+  transition:all .3s ease;}
+.news-card:hover{transform:translateY(-6px);box-shadow:0 24px 44px -20px rgba(58,33,112,0.22);border-color:transparent;}
+.news-card:focus-visible{outline:2px solid var(--violet);outline-offset:3px;}
+.news-meta{font-size:12.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--violet);margin-bottom:12px;}
+.news-card h2{font-size:20px;margin-bottom:10px;font-weight:600;}
+.news-card p{font-size:14.5px;color:var(--ink-soft);margin-bottom:18px;}
+.news-card .service-link{margin-top:auto;}
+@media(max-width:980px){.news-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:680px){
+  .news-grid{grid-template-columns:1fr;}
+  .news-empty{padding:40px 24px;}
+}
+
 .footer-legal{display:flex;gap:18px;flex-wrap:wrap;}
 .footer-legal a{color:var(--muted);transition:color .2s ease;}
 .footer-legal a:hover{color:var(--violet);}

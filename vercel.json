@@ -2,6 +2,13 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/diensten", "destination": "/services", "permanent": true },
+    { "source": "/webdesign", "destination": "/services/webdesign", "permanent": true },
+    { "source": "/google-ads", "destination": "/services/google-ads", "permanent": true },
+    { "source": "/meta-ads", "destination": "/services/meta-ads", "permanent": true },
+    { "source": "/seo", "destination": "/services/seo", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)\\.(woff2|ttf)",
