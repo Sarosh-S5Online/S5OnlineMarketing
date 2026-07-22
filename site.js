@@ -11,9 +11,14 @@
   if(!intro||!video){ root.classList.remove('intro-on'); return; }
 
   let done=false;
+  // Elke interactie slaat de intro over: klik, tik, scroll, veeg of een toets.
+  // Dat voelt natuurlijker dan alleen de knop, je hoeft nergens op te richten.
+  const skipEvents=['pointerdown','wheel','touchstart','keydown'];
+  const onInteract=()=>finish();
   const finish=()=>{
     if(done) return;
     done=true;
+    skipEvents.forEach(ev=>window.removeEventListener(ev,onInteract));
     // De warp zoomt nog even door (via CSS) en de overlay vervaagt. Het beeld is
     // op het snijpunt abstract, dus de overgang naar de echte pagina valt weg.
     intro.classList.add('intro-out');
@@ -23,8 +28,7 @@
     },600);
   };
 
-  document.getElementById('intro-skip').addEventListener('click',finish);
-  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') finish(); });
+  skipEvents.forEach(ev=>window.addEventListener(ev,onInteract,{passive:true}));
   video.addEventListener('error',finish);
   // De video is precies afgesneden op het warp-moment, dus de overgang start
   // op het allerlaatste frame ('ended' is niet altijd betrouwbaar, vandaar beide)
