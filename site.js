@@ -36,20 +36,39 @@
     if(video.duration && video.currentTime >= video.duration-0.06) finish();
   });
   video.addEventListener('ended',finish);
-  // Veiligheidsnet: blijf nooit langer dan 6 seconden hangen
-  setTimeout(finish,6000);
+  // Veiligheidsnet: blijf nooit langer dan 5 seconden hangen
+  setTimeout(finish,5000);
 
   // Kies de juiste video: staand op telefoons, liggend daarboven. Pas nu laden,
   // zodat bezoekers die de intro niet krijgen er geen byte van downloaden.
   const phone=window.matchMedia('(max-width:700px)').matches;
   const d=video.dataset;
-  video.querySelector('.intro-src-webm').src = phone ? d.mobileWebm : d.desktopWebm;
-  video.querySelector('.intro-src-mp4').src  = phone ? d.mobileMp4  : d.desktopMp4;
+  const webmEl=video.querySelector('.intro-src-webm');
+  const mp4El=video.querySelector('.intro-src-mp4');
+  // Safari op de iPhone speelt VP9-webm niet betrouwbaar en kan erover
+  // struikelen in plaats van door te vallen naar mp4. Geef de webm-bron daarom
+  // alleen aan browsers die hem echt aankunnen; de rest krijgt gewoon mp4.
+  if(video.canPlayType('video/webm; codecs="vp9"')){
+    webmEl.src = phone ? d.mobileWebm : d.desktopWebm;
+  }else{
+    webmEl.remove();
+  }
+  mp4El.src = phone ? d.mobileMp4 : d.desktopMp4;
   video.poster = phone ? d.mobilePoster : d.desktopPoster;
+  video.muted = true; // iOS vereist soms de property, niet alleen het attribuut
   video.load();
 
-  const p=video.play();
-  if(p&&p.catch) p.catch(finish); // autoplay geblokkeerd -> meteen door naar de site
+  // Op iOS mislukt de eerste play() vaak omdat de video nog niet klaar is
+  // ('AbortError' door de load()). Dat is geen blokkade: we proberen het opnieuw
+  // zodra hij kan spelen. Alleen een echte blokkade (energiebesparing ->
+  // 'NotAllowedError') slaat de intro meteen over, zodat de bezoeker niet naar
+  // een stilstaand beeld kijkt.
+  const tryPlay=()=>{
+    const p=video.play();
+    if(p&&p.catch) p.catch((err)=>{ if(err && err.name==='NotAllowedError') finish(); });
+  };
+  video.addEventListener('canplay',tryPlay,{once:true});
+  tryPlay();
 })();
 
 /* ============================================================
