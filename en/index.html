@@ -128,14 +128,14 @@
 </script>
 <script>
 /* Bepaalt vóór het renderen of de intro speelt, zodat je geen flits van de
-   pagina ziet. Alleen op de landingspagina, alleen de allereerste keer. */
+   pagina ziet. Speelt elke keer dat je de homepage opent (maar niet op de
+   andere pagina's), en nooit als de bezoeker minder beweging wil. */
 (function(){
   try{
     var p = location.pathname;
     var isHome = (p === '/en' || p === '/en/' || p === '/en/index.html');
-    var seen = localStorage.getItem('s5_intro_seen');
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(isHome && !seen && !reduce) document.documentElement.classList.add('intro-on');
+    if(isHome && !reduce) document.documentElement.classList.add('intro-on');
   }catch(e){}
 })();
 </script>
@@ -144,18 +144,20 @@
 
 <!-- ============ INTRO (alleen 1e bezoek op de landingspagina) ============ -->
 <div class="intro" id="intro" aria-hidden="true">
-  <!-- Onscherpe kopie die de zijkanten vult, zodat de video zelf volledig
-       in beeld past zonder bijgesneden te worden -->
-  <video id="intro-video-bg" class="intro-bg" muted playsinline preload="auto" tabindex="-1" aria-hidden="true">
-    <source data-src="/intro.webm" type="video/webm">
-    <source data-src="/intro.mp4" type="video/mp4">
-  </video>
-  <video id="intro-video" class="intro-main" muted playsinline preload="auto" data-poster="/intro-poster.webp" tabindex="-1">
-    <source data-src="/intro.webm" type="video/webm">
-    <source data-src="/intro.mp4" type="video/mp4">
+  <!-- Een video die de beeldverhouding van het scherm benadert (16:9 op
+       desktop, 9:16 op mobiel), dus object-fit:cover vult zonder balken.
+       De onscherpe tweede video van vroeger is daarmee overbodig. -->
+  <video id="intro-video" class="intro-main" muted playsinline preload="auto"
+         data-desktop-webm="/intro-desktop.webm" data-desktop-mp4="/intro-desktop.mp4"
+         data-mobile-webm="/intro-mobile.webm" data-mobile-mp4="/intro-mobile.mp4"
+         data-desktop-poster="/intro-desktop-poster.webp" data-mobile-poster="/intro-mobile-poster.webp"
+         tabindex="-1">
+    <source class="intro-src-webm" type="video/webm">
+    <source class="intro-src-mp4" type="video/mp4">
   </video>
   <button class="intro-skip" id="intro-skip" type="button">Skip</button>
 </div>
+
 
 <!-- ============ HEADER ============ -->
 <header id="site-header">
