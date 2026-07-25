@@ -742,3 +742,20 @@ html.intro-on .intro.intro-out{opacity:0;pointer-events:none;}
 @media(max-width:680px){
   .intro-skip{bottom:18px;right:18px;padding:9px 18px;font-size:12.5px;}
 }
+
+/* ================= AANRAKING: geen blauw vlak, wél een echte knop-druk =================
+   Op mobiel legt de browser standaard een grijs/blauw vlak over links en knoppen
+   bij een tik. Dat halen we weg en vervangen het door een tactiele 'snap': de knop
+   duikt kort in bij het indrukken en veert daarna soepel terug. */
+html{-webkit-tap-highlight-color:transparent;}
+/* Directe reactie op een tik: geen tik-vertraging, geen dubbeltik-zoom op knoppen. */
+a,button,[role="button"],summary,label,.service-card,.news-card,.case-card,.contact-card{touch-action:manipulation;}
+/* Zodat iOS het indruk-effect ook echt toont bij een tik op een kaart. */
+.service-card,.news-card,.case-card,.contact-card{cursor:pointer;}
+
+/* De snap. Snel erin (voelt als een fysieke druk), rustig eruit via de basis-transitie. */
+.btn:active,.btn-whatsapp:active{transform:scale(.95);transition-duration:.06s;}
+.form-switch-btn:active,.lang-switch a:active,.cc-link:active,.intro-skip:active{transform:scale(.93);transition-duration:.06s;}
+.footer-social a:active,.mobile-toggle:active{transform:scale(.9);transition-duration:.06s;}
+/* Grote klikbare kaarten drukken subtieler in, anders oogt het schokkerig. */
+.service-card:active,.news-card:active,.case-card:active,.contact-card:active{transform:scale(.98);transition-duration:.06s;}
