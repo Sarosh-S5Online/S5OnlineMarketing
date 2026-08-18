@@ -200,13 +200,12 @@ const S5_TEKST = {
     ccOpslaan: 'Voorkeuren opslaan',
     ccDialoog: 'Cookievoorkeuren',
     ccFooter: 'Cookie-instellingen',
-    fmWhatsApp: 'Verstuur via WhatsApp',
-    fmEmail: 'Verstuur via e-mail',
-    fmNotitieWa: 'Opent WhatsApp met je gegevens al ingevuld. Jij verstuurt het bericht zelf. Ik reageer binnen 24 uur.',
-    fmNotitieMail: 'Opent je e-mailprogramma met alles al ingevuld. Jij verstuurt de mail zelf. Ik reageer binnen 24 uur.',
+    fmVerstuur: 'Verstuur bericht',
+    fmVersturen: 'Versturen…',
+    fmNotitie: 'Je bericht komt rechtstreeks bij Sarosh binnen. Je ontvangt meteen een bevestiging per e-mail.',
+    fmFout: 'Er ging iets mis bij het versturen. Probeer het opnieuw of mail rechtstreeks naar sarosh@s5onlinemarketing.com.',
     fmNaam: 'Naam', fmEmailLabel: 'E-mail', fmTelefoon: 'Telefoon', fmBedrijf: 'Bedrijf',
     fmBerichtStandaard: 'Bericht',
-    fmIntroStandaard: 'Hoi Sarosh, ik wil graag meer weten over S5Online Marketing.',
     fmOnderwerpStandaard: 'Aanvraag via de website',
     bedanktUrl: '/bedankt',
     videoTitel: 'S5Online Marketing, boodschap van de oprichter'
@@ -229,13 +228,12 @@ const S5_TEKST = {
     ccOpslaan: 'Save preferences',
     ccDialoog: 'Cookie preferences',
     ccFooter: 'Cookie settings',
-    fmWhatsApp: 'Send via WhatsApp',
-    fmEmail: 'Send via email',
-    fmNotitieWa: 'Opens WhatsApp with your details filled in. You send the message yourself. I reply within 24 hours.',
-    fmNotitieMail: 'Opens your email app with everything filled in. You send the message yourself. I reply within 24 hours.',
+    fmVerstuur: 'Send message',
+    fmVersturen: 'Sending…',
+    fmNotitie: 'Your message goes straight to Sarosh. You will get an instant confirmation by email.',
+    fmFout: 'Something went wrong sending your message. Please try again or email sarosh@s5onlinemarketing.com directly.',
     fmNaam: 'Name', fmEmailLabel: 'Email', fmTelefoon: 'Phone', fmBedrijf: 'Company',
     fmBerichtStandaard: 'Message',
-    fmIntroStandaard: 'Hi Sarosh, I would like to know more about S5Online Marketing.',
     fmOnderwerpStandaard: 'Enquiry via the website',
     bedanktUrl: '/en/thank-you',
     videoTitel: 'S5Online Marketing, a message from the founder'
@@ -437,76 +435,52 @@ if(heroVideo){
 
 /* ============================================================
    CONTACTFORMULIER
-   De bezoeker kiest zelf: WhatsApp of e-mail. Beide kanalen
-   sturen daarna door naar de bedankt-pagina.
+   Verstuurt rechtstreeks naar Sarosh' e-mail via Web3Forms.
+   De bezoeker krijgt bij succes de bedankt-pagina te zien.
    ============================================================ */
 const contactForm=document.getElementById('contact-form');
 if(contactForm){
-  const WA_NUMMER='31627875141';
+  const WEB3FORMS_KEY='9cdc4ea1-7b53-4cd7-9205-f3ee9133874f';
   const knop=document.getElementById('cf-submit');
   const notitie=document.getElementById('cf-note');
 
-  const ICOON_WA='<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.87 9.87 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14a3.1 3.1 0 0 1-2.16 1.55c-.57.12-1.31.22-3.81-.82-2.6-1.09-4.34-3.53-4.48-3.7-.13-.17-1.06-1.41-1.06-2.7 0-1.28.67-1.9.91-2.16.24-.26.53-.32.7-.32h.5c.16 0 .38-.06.6.46.24.56.8 1.95.87 2.09.07.14.11.3.02.48-.09.18-.14.29-.27.45-.14.16-.29.35-.41.47-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.96 1.25 2.24 1.39.28.14.44.12.61-.07.16-.2.7-.81.89-1.09.19-.28.37-.23.63-.14.26.09 1.64.77 1.92.91.28.14.47.21.53.33.07.12.07.68-.16 1.34Z"/></svg>';
   const ICOON_MAIL='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
 
-  let kanaal='whatsapp';
-
-  const toonKanaal=()=>{
-    const isWa=kanaal==='whatsapp';
-    knop.innerHTML=(isWa?ICOON_WA:ICOON_MAIL)+' '+(isWa?T.fmWhatsApp:T.fmEmail);
-    knop.classList.toggle('btn-whatsapp',isWa);
-    knop.classList.toggle('btn-primary',!isWa);
-    notitie.textContent=isWa
-      ? T.fmNotitieWa
-      : T.fmNotitieMail;
-    contactForm.querySelectorAll('.form-switch-btn').forEach(b=>{
-      const actief=b.dataset.kanaal===kanaal;
-      b.classList.toggle('is-active',actief);
-      b.setAttribute('aria-pressed',actief);
-    });
-  };
-
-  contactForm.querySelectorAll('.form-switch-btn').forEach(b=>{
-    b.addEventListener('click',()=>{ kanaal=b.dataset.kanaal; toonKanaal(); });
-  });
-  toonKanaal();
-
-  // Alle velden zijn verplicht, dus de browser laat het formulier niet door
-  // met een leeg veld. Hier hoeft niets meer overgeslagen te worden.
-  const regels=()=>{
-    const v=(n)=>{ const el=contactForm.querySelector(`[name="${n}"]`); return el?el.value.trim():''; };
-    const berichtLabel=contactForm.dataset.berichtLabel||T.fmBerichtStandaard;
-    return [
-      `${T.fmNaam}: ${v('naam')}`,
-      `${T.fmEmailLabel}: ${v('email')}`,
-      `${T.fmTelefoon}: ${v('telefoon')}`,
-      `${T.fmBedrijf}: ${v('bedrijf')}`,
-      `${berichtLabel}: ${v('bericht')}`
-    ].join('\n');
-  };
+  const teksLabel=ICOON_MAIL+' '+T.fmVerstuur;
+  knop.innerHTML=teksLabel;
+  knop.classList.remove('btn-whatsapp');
+  knop.classList.add('btn-primary');
+  notitie.textContent=T.fmNotitie;
 
   const naarBedankt=()=>{ window.location.href=T.bedanktUrl; };
 
-  contactForm.addEventListener('submit',(e)=>{
+  contactForm.addEventListener('submit',async(e)=>{
     e.preventDefault();
-    const intro=contactForm.dataset.intro||T.fmIntroStandaard;
-    const tekst=`${intro}\n\n${regels()}`;
+    knop.disabled=true;
+    knop.innerHTML=T.fmVersturen;
 
-    if(kanaal==='whatsapp'){
-      // Openen tijdens de klik van de bezoeker, anders blokkeert de browser het.
-      window.open(`https://wa.me/${WA_NUMMER}?text=${encodeURIComponent(tekst)}`,'_blank','noopener');
-      naarBedankt();
-      return;
+    const data=new FormData(contactForm);
+    data.append('access_key',WEB3FORMS_KEY);
+    data.append('subject',contactForm.dataset.onderwerp||T.fmOnderwerpStandaard);
+    data.append('from_name','S5Online Marketing website');
+    data.append('botcheck','');
+
+    try{
+      const res=await fetch('https://api.web3forms.com/submit',{
+        method:'POST',
+        headers:{Accept:'application/json'},
+        body:data
+      });
+      const json=await res.json();
+      if(json.success){
+        naarBedankt();
+        return;
+      }
+      throw new Error(json.message||'submit failed');
+    }catch(err){
+      notitie.textContent=T.fmFout;
+      knop.disabled=false;
+      knop.innerHTML=teksLabel;
     }
-
-    // E-mail. Zolang er geen verzenddienst is ingesteld, openen we de mailapp
-    // van de bezoeker met alles ingevuld. Dat komt gewoon aan en er komt geen
-    // enkele externe partij aan de gegevens te pas.
-    const onderwerp=contactForm.dataset.onderwerp||T.fmOnderwerpStandaard;
-    const a=document.createElement('a');
-    a.href=`mailto:${S5_CONFIG.contactEmail}?subject=${encodeURIComponent(onderwerp)}&body=${encodeURIComponent(tekst)}`;
-    document.body.appendChild(a); a.click(); a.remove();
-    // Even wachten, anders onderbreekt het doorsturen het openen van de mailapp.
-    setTimeout(naarBedankt,800);
   });
 }
