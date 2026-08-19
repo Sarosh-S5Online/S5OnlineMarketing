@@ -77,9 +77,8 @@
    wordt er niets geladen (de cookiebanner werkt wel gewoon).
    ============================================================ */
 const S5_CONFIG={
-  gaId:'',        // bijv. 'G-XXXXXXXXXX'  (Google Analytics 4)
-  adsId:'',       // bijv. 'AW-XXXXXXXXX'  (Google Ads conversietag)
-  metaPixelId:'', // bijv. '1234567890'    (Meta pixel)
+  gtmId:'GTM-K3HX2XBS', // Google Tag Manager (regelt GA4 + Google Ads conversietracking)
+  metaPixelId:'',       // bijv. '1234567890'    (Meta pixel)
 
   // Waar de aanvragen binnenkomen.
   contactEmail:'sarosh@s5onlinemarketing.com'
@@ -139,13 +138,11 @@ const ccLoadScript=(src)=>{
 
 const ccLoadGoogle=()=>{
   if(ccGoogleLoaded) return;
-  const id=S5_CONFIG.gaId||S5_CONFIG.adsId;
-  if(!id) return; // nog geen ID ingevuld
+  if(!S5_CONFIG.gtmId) return; // nog geen GTM-ID ingevuld
   ccGoogleLoaded=true;
-  ccLoadScript(`https://www.googletagmanager.com/gtag/js?id=${id}`);
-  gtag('js',new Date());
-  if(S5_CONFIG.gaId) gtag('config',S5_CONFIG.gaId,{anonymize_ip:true});
-  if(S5_CONFIG.adsId) gtag('config',S5_CONFIG.adsId);
+  // Google Tag Manager regelt vanaf hier zelf GA4 en de Google Ads conversietag.
+  dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+  ccLoadScript(`https://www.googletagmanager.com/gtm.js?id=${S5_CONFIG.gtmId}`);
 };
 
 const ccLoadMeta=()=>{
@@ -473,6 +470,7 @@ if(contactForm){
       });
       const json=await res.json();
       if(json.success){
+        dataLayer.push({event:'s5_lead_form_submit'});
         naarBedankt();
         return;
       }
