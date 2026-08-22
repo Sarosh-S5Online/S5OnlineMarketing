@@ -78,7 +78,7 @@
    ============================================================ */
 const S5_CONFIG={
   gtmId:'GTM-K3HX2XBS', // Google Tag Manager (regelt GA4 + Google Ads conversietracking)
-  metaPixelId:'',       // bijv. '1234567890'    (Meta pixel)
+  metaPixelId:'1441424247158435', // Meta pixel "S5Online Marketing Pixel", rechtstreeks (niet via GTM)
 
   // Waar de aanvragen binnenkomen.
   contactEmail:'sarosh@s5onlinemarketing.com'
@@ -155,7 +155,25 @@ const ccLoadMeta=()=>{
   'https://connect.facebook.net/en_US/fbevents.js');
   fbq('init',S5_CONFIG.metaPixelId);
   fbq('track','PageView');
+
+  // Zelfde paginascoping als voorheen via GTM: Lead op de bedankt-pagina's,
+  // ViewContent op de servicepagina's. Robuust, want gebaseerd op de bereikte
+  // pagina en niet op een los JS-event dat kan mislukken.
+  const path=window.location.pathname;
+  if(/^\/(bedankt|en\/thank-you)$/.test(path)){
+    fbq('track','Lead');
+  }else if(/^\/(en\/)?services\/[a-z-]+$/.test(path)){
+    fbq('track','ViewContent',{content_name:document.title,content_category:'service'});
+  }
 };
+
+// Contact-event bij een klik op het mailto-e-mailadres. Vuurt alleen als de
+// pixel al geladen is, dus alleen met marketingtoestemming (zelfde gedrag
+// als voorheen via GTM).
+document.addEventListener('click',(e)=>{
+  if(typeof fbq!=='function') return;
+  if(e.target.closest('a[href^="mailto:"]')) fbq('track','Contact');
+});
 
 const ccApply=(c)=>{
   gtag('consent','update',{
